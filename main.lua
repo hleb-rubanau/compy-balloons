@@ -14,6 +14,7 @@ function startChallenge()
   if not current_challenge then
     return startGame()
   end
+  logdebug("STARTED CHALLENGE: %s", current_challenge.question)
 end
 
 function startGame()
@@ -64,8 +65,9 @@ function redraw()
 end
 
 function wait_for_answer()
-  local dy = field_height * (time / ANSWER_TIMEOUT)
-  current_y = current_y + dy
+  local rate = (time / ANSWER_TIMEOUT)
+  logdebug("Waiting for: %s (fh=%s), rate=%s", time, field_height, rate)
+  current_y = field_height * (time / ANSWER_TIMEOUT)
   redraw()
   check_input()
 end

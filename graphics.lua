@@ -91,6 +91,6 @@ function drawQuestion(question, answer, is_valid)
   if is_valid then
     color = COLORS.answer_ok
   end
-  inspect("COLOR",color)
+  --inspect("COLOR",color)
   drawQuestionObject(question, answer, color)
 end
