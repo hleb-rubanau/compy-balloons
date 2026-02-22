@@ -8,3 +8,5 @@ current_answer = nil
 current_answer_valid = false
 current_x = nil
 counters = { }
+on_click = nil
+on_update = nil

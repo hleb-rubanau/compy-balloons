@@ -7,6 +7,7 @@ COLORS = {
   answer_fail = Color[Color.red],
   time = Color[Color.yellow],
   counters = Color[Color.yellow],
+  splash = Color[Color.yellow]
 }
 
 ANSWER_TIMEOUT=10
@@ -15,11 +16,13 @@ LOSS_DELAY=3
 FPS=2
 
 SCREEN_VPAD=0.1
-QUESTION_FONT_SIZE = 20
-ANSWER_FONT_SIZE = 22
-TIME_FONT_SIZE=32
-COUNTERS_FONT_SIZE=32
 
-DEFAULT_ANSWER_WIDTH = 20
+FONTS = {
+  question = 20,
+  answer  = 22,
+  time  = 32,
+  counters = 32,
+  splash = 64
+}
 
 ANSWER_STUB='     '

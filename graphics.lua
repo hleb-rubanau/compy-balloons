@@ -2,9 +2,40 @@ require("config")
 require("constants")
 require("debugfunc")
 
+local function maxStringWidth(strings, font)
+  local maxWidth = 0
+  for _, s in ipairs(strings) do
+      local w = font:getWidth(s)
+      if w > maxWidth then
+          maxWidth = w
+      end
+  end
+  return maxWidth
+end
+
 function drawBackground() 
   gfx.setColor(COLORS.bg)
   gfx.rectangle("fill", 0,0, sw, sh*(1-SCREEN_VPAD))
+end
+
+function drawSplash(txt)  
+  logdebug("Drawing splash: %s", txt)
+  local lines = string.split(txt,"\n")
+  logdebug("lines=%s", #lines)
+  inspect("LINES",lines)
+  local f = fonts.splash
+  local fh = f:getHeight()
+  local box_height = #lines * fh + (#lines - 1) * 0.5 *fh
+  local box_y = (field_height - box_height)/2
+  local box_width = maxStringWidth(lines, fonts.splash)
+  local box_x = (field_width - box_width)/2
+  drawBackground()
+  gfx.setColor(COLORS.splash)
+  gfx.setFont(f)
+  for i,t in ipairs(lines) do
+    local ty = box_y + (i-1)*fh*1.5
+    gfx.printf(t, box_x, ty, box_width, center)
+  end
 end
 
 function calc_text_geometry(font, txt)

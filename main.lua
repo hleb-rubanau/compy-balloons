@@ -5,12 +5,18 @@ require("challenges")
 require("variables")
 require("debugfunc")
 
+function gameOver()
+  local tmpl = "Your score: %s\nClick to restart"
+  local msg = fmt(tmpl, counters.score)
+  drawSplash(msg)
+  on_click = startGame
+  on_update = nil
+end
+
 function startChallenge()
-  logdebug("START CHALLENGE")
   current_challenge = next_challenge()  
   if not current_challenge then
-    logdebug("RESTARTING GAME")
-    return startGame()
+    return gameOver()
   end
   current_question = current_challenge.question
   current_answer = nil
@@ -21,24 +27,22 @@ function startChallenge()
   redraw()
 end
 
-function startGame()
-  next_challenge = challenges()
-  current_challenge = nil
-  time = 0
+function reset_counters()
   counters.win=0
   counters.loss=0
   counters.bonus=0
-  drawBackground()
-  drawCounters()
-  startChallenge()
 end
 
-function init()
-  startGame()
-  -- activate user input
-  userinp=user_input()
-  love.update = on_tick
+function startGame()
+  next_challenge = challenges()
+  reset_counters()
+  --drawBackground()
+  --drawCounters()
+  startChallenge()
+  on_click = nil
+  on_update = on_tick
 end
+
 
 function on_valid_answer()
   counters.win = counters.win + 1
@@ -108,6 +112,23 @@ function check_input()
   else
     on_input( userinp() )
   end
+end
+
+function love.update(dt)
+  if on_tick then
+  end
+end
+
+function love.singleclick()
+  if on_click then
+    on_click()
+  end
+end
+
+function init()
+  userinp=user_input()
+  drawSplash('Click to start')
+  on_click = startGame
 end
 
 safe_exec(init)
