@@ -64,11 +64,11 @@ function answer_text_position(bh, ah, qh, qw)
   return answer_x, answer_y
 end
 
-function drawPendingBonus(x,y)
+function drawPendingBonus(x,y, score, color)
   local bonus = ANSWER_TIMEOUT - math.floor(time)
   local tw = fonts.score:getWidth(tostring(bonus))
   local th = fonts.score:getHeight()
-  gfx.setColor(COLORS.score_bg)
+  gfx.setColor(color)
   gfx.circle("fill", x, y, BALLOON_RADIUS)
   gfx.setColor(COLORS.score)
   gfx.circle("line", x, y, BALLOON_RADIUS)
@@ -76,7 +76,7 @@ function drawPendingBonus(x,y)
   gfx.printf(bonus, x-tw/2, y-th/2, tw, "center")
 end
 
-function drawQuestionObject(question, answer, answer_color)
+function drawQuestionObject(question, answer, score, color)
   local x,y = current_x, current_y
   --logdebug("Drawing object at (%s,%s)", x, y)
   local qw, qh = calc_text_geometry(fonts.question, question)
@@ -94,7 +94,7 @@ function drawQuestionObject(question, answer, answer_color)
   if x < 2*BALLOON_RADIUS then
     x = 2*BALLOON_RADIUS
   end
-  drawPendingBonus(x-BALLOON_RADIUS, y + bh/2)
+  drawPendingBonus(x-BALLOON_RADIUS, y + bh/2, score, color)
   --logdebug("qw=%s, qh=%s, aw=%s, ah=%s, bw=%s, bh=%s", qw,qh,aw,ah,bw,bh)
   gfx.setColor(COLORS.question_bg)
   gfx.rectangle("fill", x, y, bw, bh)
@@ -106,7 +106,7 @@ function drawQuestionObject(question, answer, answer_color)
 
   if answer then
     local ax, ay = answer_text_position(bh, ah, qh, qw)
-    gfx.setColor(answer_color)
+    gfx.setColor(color)
     gfx.setFont(fonts.answer)
     gfx.printf(answer, x+ax, y+ay, aw, "left")
   end
@@ -157,11 +157,14 @@ function drawFailedResult(n)
   renderResultCard(n, COLORS.results_fail)
 end
 
-function drawQuestion(question, answer, is_valid) 
-  local color = COLORS.answer_fail
-  if is_valid then
-    color = COLORS.answer_ok
-  end
-  --inspect("COLOR",color)
-  drawQuestionObject(question, answer, color)
+function drawQuestion(question, score) 
+  drawQuestionObject(question, answer, score, COLORS.results_wait)
+end
+
+function drawWrongAnswer(question, answer, score)
+  drawQuestionObject(question, answer, score, COLORS.answer_fail)
+end
+
+function drawProperAnswer(question, answer, score)
+  drawQuestionObject(question, answer, score, COLORS.answer_ok)
 end

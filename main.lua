@@ -5,6 +5,11 @@ require("challenges")
 require("variables")
 require("debugfunc")
 
+function current_bonus()
+  return ANSWER_TIMEOUT - math.floor(time)
+end
+
+
 function gameOver()
   local tmpl = "Your score: %s (%s/%s)\nClick to restart"
   local msg = fmt(tmpl, counters.score, counters.win, counters.win+counters.loss)
@@ -49,10 +54,11 @@ end
 
 function on_valid_answer()
   counters.win = counters.win + 1
-  local bonus = (ANSWER_TIMEOUT - math.floor(time))
+  local bonus = current_bonus()
   counters.score = counters.score + bonus
   drawScore(counters.score)
   drawSuccessfulResult(current_result_number, bonus)
+  drawProperAnswer(current_question, current_answer, bonus)
   sfx.wow()
   wait_time = 0
   redraw()
@@ -74,8 +80,17 @@ end
 
 function redraw()
   next_redraw = time + (1/FPS)
-  drawFieldBackground()
-  drawQuestion( current_question, current_answer, current_answer_valid )
+  drawFieldBackground() 
+  local bonus = current_bonus()
+  if current_answer then
+    if current_answer_valid then
+      return drawProperAnswer(current_question, current_answer, bonus)
+    else
+      return drawWrongAnswer(current_question, current_answer, bonus)
+    end
+  else
+    return drawQuestion(current_question, bonus)
+  end
 end
 
 function wait_before_next(dt) 
