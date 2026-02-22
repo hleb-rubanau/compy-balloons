@@ -7,7 +7,7 @@ function add_challenge(q,a)
 end
 
 add_challenge("Print missing letter in 'giraf..e':","f")
-add_challenge("print missing letter in 'car..ot':", "r")
+add_challenge("Print missing letter in 'car..ot':", "r")
 add_challenge("Print missing letter in 'eleph..nt':","a")
 add_challenge("Print missing letter in 'ban..na':","a")
 add_challenge("Print missing letter in 'do..key':","n")
