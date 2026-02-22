@@ -30,7 +30,7 @@ end
 function reset_counters()
   counters.win=0
   counters.loss=0
-  counters.bonus=0
+  counters.score=0
 end
 
 function startGame()
@@ -46,7 +46,7 @@ end
 
 function on_valid_answer()
   counters.win = counters.win + 1
-  counters.bonus = counters.bonus + (ANSWER_TIMEOUT - math.floor(time))
+  counters.score = counters.score + (ANSWER_TIMEOUT - math.floor(time))
   drawCounters()
   sfx.wow()
   wait_time = 0
@@ -116,6 +116,7 @@ end
 
 function love.update(dt)
   if on_tick then
+    on_tick(dt)
   end
 end
 

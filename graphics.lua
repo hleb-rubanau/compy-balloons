@@ -95,7 +95,7 @@ end
 
 function drawCounters()
   local c = counters
-  local cline = fmt("%s | %s | %s", c.win, c.loss, c.bonus)
+  local cline = fmt("%s | %s | %s", c.win, c.loss, c.score)
   local ch = fonts.counters:getHeight()
   local cw = fonts.counters:getWidth(cline)
   local cx = sw - cw - ch
