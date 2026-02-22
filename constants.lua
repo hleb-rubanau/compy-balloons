@@ -6,6 +6,7 @@ sw, sh = gfx.getDimensions()
 
 fonts = {
   question = gfx.newFont(QUESTION_FONT_SIZE),
-  answer = gfx.newFont(ANSWER_FONT_SIZE)
+  answer = gfx.newFont(ANSWER_FONT_SIZE),
+  time = gfx.newFont(TIME_FONT_SIZE)
 }
 

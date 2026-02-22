@@ -33,14 +33,17 @@ function drawSamples(txt, good, bad)
   drawRandomQuestion(qx3, qy3, txt, good, true)
 end
 
-function debug_nextchallenge()
-  local c = next_challenge()  
+function startChallenge()
+  current_challenge = next_challenge()  
   drawBackground()
-  if c then
-    drawSamples(c.question, c.answer, "wrong")
-  else
-    startGame()
+  if not current_challenge then
+    return startGame()
   end
+  current_answer = nil
+  current_x = get_random_x()
+  current_y = 0
+  local q = current_challenge.question
+  drawQuestionObject(q)
 end
 
 function startGame()
@@ -50,17 +53,34 @@ function startGame()
   counters['win']=0
   counters['loss']=0
   drawBackground()
+  startChallenge()
 end
 
 function init()
   startGame()
   -- activate user input
   userinp=user_input()
-  love.update = check_input
+  love.update = on_tick
 end
 
 function on_input(txt)
-  print( fmt("INPUT: %s", txt) )
+  if current_challenge then
+    local valid = txt==current_challenge.answer
+    drawQuestion( current_challenge.question, txt, valid) 
+    if valid then
+      -- TODO: remove sleep, use ticker
+      love.timer.sleep(3)
+      startChallenge()
+    end
+  end
+end
+
+function on_tick(dt)
+  time = time+dt
+  --logdebug("Time: %s", time)
+  --drawTime(time)
+  safe_exec(drawTime, time)
+  check_input()
 end
 
 function check_input()
@@ -69,10 +89,6 @@ function check_input()
   else
     on_input( userinp() )
   end
-end
-
-function love.singleclick()
-  safe_exec( debug_nextchallenge )
 end
 
 safe_exec(init)

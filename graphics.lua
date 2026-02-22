@@ -31,7 +31,8 @@ function answer_text_position(bh, ah, qh, qw)
   return answer_x, answer_y
 end
 
-function drawQuestionObject(x, y, question, answer, answer_color)
+function drawQuestionObject(question, answer, answer_color)
+  local x,y = current_x, current_y
   logdebug("Drawing object at (%s,%s)", x, y)
   local qw, qh = calc_text_geometry(fonts.question, question)
   local aw, ah = calc_text_geometry(fonts.answer, ANSWER_STUB)
@@ -59,4 +60,23 @@ end
 function get_random_x()
   math.randomseed(os.time())
   return math.random(sw*0.6)
+end
+
+function drawTime(t)
+  local th = fonts.time:getHeight()
+  local tw = fonts.time:getWidth(ANSWER_STUB)
+  local tx = th/2
+  local ty = sh*(1-SCREEN_VPAD)-th
+  gfx.setColor(COLORS.bg)
+  gfx.rectangle("fill", tx, ty, tx+tw, ty+th)
+  gfx.setColor(COLORS.time)
+  gfx.printf(tostring(t), tx, ty, tw, "left")
+end
+
+function drawQuestion(question, answer, is_valid) 
+  local color = COLORS.answer_fail
+  if is_valid then
+    color = COLORS.answer_ok
+  end
+  drawQuestionObject(question, txt, color)
 end
