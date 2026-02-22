@@ -7,6 +7,7 @@ require("debugfunc")
 
 function startChallenge()
   current_challenge = next_challenge()  
+  current_question = current_challenge.question
   current_answer = nil
   current_answer_valid = false
   current_x = get_random_x()
@@ -14,7 +15,7 @@ function startChallenge()
   if not current_challenge then
     return startGame()
   end
-  logdebug("STARTED CHALLENGE: %s", current_challenge.question)
+  redraw()
 end
 
 function startGame()
@@ -58,18 +59,11 @@ function on_input(txt)
 end
 
 function redraw()
+  next_redraw = time + (1/FPS)
   drawBackground()
   drawQuestion( current_question, current_answer, current_answer_valid )
   drawTime(math.floor(time))
   drawCounters()
-end
-
-function wait_for_answer()
-  local rate = (time / ANSWER_TIMEOUT)
-  logdebug("Waiting for: %s (fh=%s), rate=%s", time, field_height, rate)
-  current_y = field_height * (time / ANSWER_TIMEOUT)
-  redraw()
-  check_input()
 end
 
 function wait_before_next(dt) 
@@ -95,7 +89,11 @@ function on_tick(dt)
     if time > ANSWER_TIMEOUT then
       return on_timeout()
     end 
-    wait_for_answer()
+    if time > next_redraw then
+      current_y = field_height * (time / ANSWER_TIMEOUT)
+      redraw()
+    end
+    check_input()
   end
 end
 
