@@ -64,6 +64,18 @@ function answer_text_position(bh, ah, qh, qw)
   return answer_x, answer_y
 end
 
+function drawPendingBonus(x,y)
+  local bonus = ANSWER_TIMEOUT - math.floor(time)
+  local tw = fonts.score:getWidth(tostring(bonus))
+  local th = fonts.score:getHeight()
+  gfx.setColor(COLORS.score_bg)
+  gfx.circle("fill", x, y, BALLOON_RADIUS)
+  gfx.setColor(COLORS.score)
+  gfx.circle("line", x, y, BALLOON_RADIUS)
+  gfx.setFont(fonts.score)
+  gfx.printf(bonus, x-tw/2, y-th/2, tw, "center")
+end
+
 function drawQuestionObject(question, answer, answer_color)
   local x,y = current_x, current_y
   --logdebug("Drawing object at (%s,%s)", x, y)
@@ -75,10 +87,14 @@ function drawQuestionObject(question, answer, answer_color)
   local bw, bh = text_background_geometry(qw, qh, aw, ah)
 
   -- prevent off-screen
-  local dx = x + bw - field_width
+  local dx = x + bw + 2*BALLOON_RADIUS - field_width
   if dx > 0 then
     x = x - 2*dx
   end
+  if x < 2*BALLOON_RADIUS then
+    x = 2*BALLOON_RADIUS
+  end
+  drawPendingBonus(x-BALLOON_RADIUS, y + bh/2)
   --logdebug("qw=%s, qh=%s, aw=%s, ah=%s, bw=%s, bh=%s", qw,qh,aw,ah,bw,bh)
   gfx.setColor(COLORS.question_bg)
   gfx.rectangle("fill", x, y, bw, bh)
@@ -98,7 +114,7 @@ end
 
 function get_random_x()
   math.randomseed(os.time())
-  return math.random(sw*0.6)
+  return math.random(field_width*0.9)
 end
 
 function drawScore(score)

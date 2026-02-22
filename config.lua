@@ -36,3 +36,4 @@ FONTS = {
 }
 
 ANSWER_STUB='     '
+BALLOON_RADIUS=24
