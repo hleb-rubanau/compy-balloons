@@ -1,6 +1,8 @@
 require("config")
 require("constants")
 require("graphics")
+require("challenges")
+require("variables")
 require("debugfunc")
 
 function drawRandomQuestion(x, y, txt, answer, valid)
@@ -25,20 +27,27 @@ function drawSamples(txt, good, bad)
   local qy3 = qy+200
 
   logdebug("(x1,y1)=(%s,%s); (x2,y2)=(%s,%s); (x3,y3)=(%s,%s)", qx, qy, qx2, qy2, qx3, qy3)
-  
+
   drawRandomQuestion(qx, qy, txt)
   drawRandomQuestion(qx2, qy2, txt, bad, false)
   drawRandomQuestion(qx3, qy3, txt, good, true)
 end
 
+function debug_nextchallenge()
+  local c = next_challenge()  
+  drawBackground()
+  if c then
+    drawSamples(c.question, c.answer, "wrong")
+  end
+end
+
 function init()
   -- activate user input
+  next_challenge = challenges()
   time = 0
   userinp=user_input()
   love.update = check_input
   drawBackground()
-
-  drawSamples("Print missing letter in 'giraf..e': ", "f", "y")
 end
 
 function on_input(txt)
@@ -51,6 +60,10 @@ function check_input()
   else
     on_input( userinp() )
   end
+end
+
+function love.singleclick()
+  safe_exec( debug_nextchallenge )
 end
 
 safe_exec(init)
