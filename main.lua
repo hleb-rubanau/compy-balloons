@@ -6,16 +6,18 @@ require("variables")
 require("debugfunc")
 
 function startChallenge()
+  logdebug("START CHALLENGE")
   current_challenge = next_challenge()  
+  if not current_challenge then
+    logdebug("RESTARTING GAME")
+    return startGame()
+  end
   current_question = current_challenge.question
   current_answer = nil
   current_answer_valid = false
   current_x = get_random_x()
   current_y = 0
   time = 0
-  if not current_challenge then
-    return startGame()
-  end
   redraw()
 end
 
