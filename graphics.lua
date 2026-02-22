@@ -62,13 +62,26 @@ function get_random_x()
   return math.random(sw*0.6)
 end
 
+function drawCounters()
+  local c = counters
+  local cline = fmt("%s | %s | %s", c.win, c.loss, c.bonus)
+  local ch = fonts.counters:getHeight()
+  local cw = fonts.counters:getWidth(cline)
+  local cx = sw - cw - ch
+  local cy = field_height - ch*1.5
+  gfx.setColor(COLORS.bg)
+  gfx.rectangle("fill", cx, cy, cw, ch)
+  gfx.setColor(COLORS.counters)
+  gfx.printf(cline, cx, cy, cw, "right")
+end
+
 function drawTime(t)
   local th = fonts.time:getHeight()
   local tw = fonts.time:getWidth(ANSWER_STUB)
   local tx = th/2
-  local ty = sh*(1-SCREEN_VPAD)-th
+  local ty = field_height-th*1.5
   gfx.setColor(COLORS.bg)
-  gfx.rectangle("fill", tx, ty, tx+tw, ty+th)
+  gfx.rectangle("fill", tx, ty, tw, th)
   gfx.setColor(COLORS.time)
   gfx.printf(tostring(t), tx, ty, tw, "left")
 end
@@ -78,5 +91,6 @@ function drawQuestion(question, answer, is_valid)
   if is_valid then
     color = COLORS.answer_ok
   end
-  drawQuestionObject(question, txt, color)
+  inspect("COLOR",color)
+  drawQuestionObject(question, answer, color)
 end
