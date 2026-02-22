@@ -33,14 +33,14 @@ end
 
 function drawQuestionObject(question, answer, answer_color)
   local x,y = current_x, current_y
-  logdebug("Drawing object at (%s,%s)", x, y)
+  --logdebug("Drawing object at (%s,%s)", x, y)
   local qw, qh = calc_text_geometry(fonts.question, question)
   local aw, ah = calc_text_geometry(fonts.answer, ANSWER_STUB)
   if answer then
     aw, ah = calc_text_geometry(fonts.answer, answer)
   end 
   local bw, bh = text_background_geometry(qw, qh, aw, ah)
-  logdebug("qw=%s, qh=%s, aw=%s, ah=%s, bw=%s, bh=%s", qw,qh,aw,ah,bw,bh)
+  --logdebug("qw=%s, qh=%s, aw=%s, ah=%s, bw=%s, bh=%s", qw,qh,aw,ah,bw,bh)
   gfx.setColor(COLORS.question_bg)
   gfx.rectangle("fill", x, y, bw, bh)
 

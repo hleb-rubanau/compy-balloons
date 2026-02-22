@@ -47,11 +47,12 @@ function on_valid_answer()
 end
 
 function on_input(txt)
+  logdebug("ANSWER: %s", txt)
   if current_challenge then
     if current_answer_valid then
       return 
     end
-    curret_answer = txt
+    current_answer = txt
     current_answer_valid = (txt==current_challenge.answer)
     if current_answer_valid then
       return on_valid_answer()
