@@ -5,54 +5,26 @@ require("challenges")
 require("variables")
 require("debugfunc")
 
-function drawRandomQuestion(x, y, txt, answer, valid)
-  if answer then
-    local answer_color = COLORS.answer_ok
-    if not valid then  
-      answer_color = COLORS.answer_fail
-    end
-    return drawQuestionObject(x, y, txt, answer, answer_color)
-  end
-  return drawQuestionObject(x, y, txt)
-end
-
-function drawSamples(txt, good, bad)
-  local qx = get_random_x()
-  local qy = get_random_x() / 10
-
-  local qx2 = get_random_x()
-  local qy2 = qy+100
-
-  local qx3 = get_random_x()
-  local qy3 = qy+200
-
-  logdebug("(x1,y1)=(%s,%s); (x2,y2)=(%s,%s); (x3,y3)=(%s,%s)", qx, qy, qx2, qy2, qx3, qy3)
-
-  drawRandomQuestion(qx, qy, txt)
-  drawRandomQuestion(qx2, qy2, txt, bad, false)
-  drawRandomQuestion(qx3, qy3, txt, good, true)
-end
-
 function startChallenge()
   current_challenge = next_challenge()  
-  drawBackground()
+  current_answer = nil
+  current_answer_valid = false
+  current_x = get_random_x()
+  current_y = 0
   if not current_challenge then
     return startGame()
   end
-  current_answer = nil
-  current_x = get_random_x()
-  current_y = 0
-  local q = current_challenge.question
-  drawQuestionObject(q)
 end
 
 function startGame()
   next_challenge = challenges()
   current_challenge = nil
   time = 0
-  counters['win']=0
-  counters['loss']=0
+  counters.win=0
+  counters.loss=0
+  counters.bonus=0
   drawBackground()
+  drawCounters()
   startChallenge()
 end
 
@@ -63,24 +35,66 @@ function init()
   love.update = on_tick
 end
 
+function on_valid_answer()
+  counters.win = counters.win + 1
+  counters.bonus = counters.bonus + (ANSWER_TIMEOUT - math.floor(time))
+  drawCounters()
+  sfx.wow()
+  wait_time = 0
+  redraw()
+end
+
 function on_input(txt)
   if current_challenge then
-    local valid = txt==current_challenge.answer
-    drawQuestion( current_challenge.question, txt, valid) 
-    if valid then
-      -- TODO: remove sleep, use ticker
-      love.timer.sleep(3)
-      startChallenge()
+    if current_answer_valid then
+      return 
+    end
+    current_answer_valid = (txt==current_challenge.answer)
+    if current_answer_valid then
+      return on_valid_answer()
     end
   end
 end
 
-function on_tick(dt)
-  time = time+dt
-  --logdebug("Time: %s", time)
-  --drawTime(time)
-  safe_exec(drawTime, time)
+function redraw()
+  drawBackground()
+  drawQuestion( current_question, current_answer, current_answer_valid )
+  drawTime(math.floor(time))
+  drawCounters()
+end
+
+function wait_for_answer()
+  local dy = field_height * (time / ANSWER_TIMEOUT)
+  current_y = current_y + dy
+  redraw()
   check_input()
+end
+
+function wait_before_next(dt) 
+  wait_time = wait_time+dt
+  if wait_time > WIN_DELAY then
+    startChallenge()
+  end
+end
+
+function on_timeout()
+  counters.loss = counters.loss + 1
+  sfx.boom()
+  drawCounters()
+  startChallenge()
+end
+
+function on_tick(dt)
+  if current_challenge then
+    if current_answer_valid then
+      return wait_before_next(dt)
+    end
+    time = time+dt
+    if time > ANSWER_TIMEOUT then
+      return on_timeout()
+    end 
+    wait_for_answer()
+  end
 end
 
 function check_input()
