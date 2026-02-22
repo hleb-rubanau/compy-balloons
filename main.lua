@@ -18,12 +18,14 @@ function startChallenge()
   if not current_challenge then
     return gameOver()
   end
+  current_result_number = current_result_number + 1
   current_question = current_challenge.question
   current_answer = nil
   current_answer_valid = false
   current_x = get_random_x()
   current_y = 0
   time = 0
+  drawWaitingResult(current_result_number)
   redraw()
 end
 
@@ -31,23 +33,26 @@ function reset_counters()
   counters.win=0
   counters.loss=0
   counters.score=0
+  current_result_number=0
 end
 
 function startGame()
+  on_click = nil
   next_challenge = challenges()
   reset_counters()
-  --drawBackground()
-  --drawCounters()
+  drawPendingResults()
+  drawScore(0)
   startChallenge()
-  on_click = nil
   on_update = on_tick
 end
 
 
 function on_valid_answer()
   counters.win = counters.win + 1
-  counters.score = counters.score + (ANSWER_TIMEOUT - math.floor(time))
-  drawCounters()
+  local bonus = (ANSWER_TIMEOUT - math.floor(time))
+  counters.score = counters.score + bonus
+  drawScore(counters.score)
+  drawSuccessfulResult(current_result_number, bonus)
   sfx.wow()
   wait_time = 0
   redraw()
@@ -69,10 +74,8 @@ end
 
 function redraw()
   next_redraw = time + (1/FPS)
-  drawBackground()
+  drawFieldBackground()
   drawQuestion( current_question, current_answer, current_answer_valid )
-  drawTime(math.floor(time))
-  drawCounters()
 end
 
 function wait_before_next(dt) 
@@ -84,8 +87,8 @@ end
 
 function on_timeout()
   counters.loss = counters.loss + 1
+  drawFailedResult(current_result_number)
   sfx.boom()
-  drawCounters()
   startChallenge()
 end
 
@@ -116,13 +119,15 @@ end
 
 function love.update(dt)
   if on_tick then
-    on_tick(dt)
+    --on_tick(dt)
+    safe_exec(on_tick,dt)
   end
 end
 
 function love.singleclick()
   if on_click then
-    on_click()
+    --on_click()
+    safe_exec( on_click )
   end
 end
 

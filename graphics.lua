@@ -15,20 +15,22 @@ end
 
 function drawBackground() 
   gfx.setColor(COLORS.bg)
-  gfx.rectangle("fill", 0,0, sw, sh*(1-SCREEN_VPAD))
+  gfx.rectangle("fill", 0,0, sw, field_height)
+end
+
+function drawFieldBackground() 
+  gfx.setColor(COLORS.bg)
+  gfx.rectangle("fill", 0,0, field_width, field_height)
 end
 
 function drawSplash(txt)  
-  logdebug("Drawing splash: %s", txt)
   local lines = string.split(txt,"\n")
-  logdebug("lines=%s", #lines)
-  inspect("LINES",lines)
   local f = fonts.splash
   local fh = f:getHeight()
   local box_height = #lines * fh + (#lines - 1) * 0.5 *fh
   local box_y = (field_height - box_height)/2
   local box_width = maxStringWidth(lines, fonts.splash)
-  local box_x = (field_width - box_width)/2
+  local box_x = (screen_width - box_width)/2
   drawBackground()
   gfx.setColor(COLORS.splash)
   gfx.setFont(f)
@@ -93,28 +95,44 @@ function get_random_x()
   return math.random(sw*0.6)
 end
 
-function drawCounters()
-  local c = counters
-  local cline = fmt("%s | %s | %s", c.win, c.loss, c.score)
-  local ch = fonts.counters:getHeight()
-  local cw = fonts.counters:getWidth(cline)
-  local cx = sw - cw - ch
-  local cy = field_height - ch*1.5
-  gfx.setColor(COLORS.bg)
-  gfx.rectangle("fill", cx, cy, cw, ch)
-  gfx.setColor(COLORS.counters)
-  gfx.printf(cline, cx, cy, cw, "right")
+function drawScore(score)
+  gfx.setColor(COLORS.score_bg)
+  gfx.rectangle("fill", panel_x, 0, screen_width, panel_width)
+  gfx.setColor(COLORS.score)
+  gfx.setFont(fonts.score)
+  gfx.printf(score, panel_x, score_y, panel_width, "center")
 end
 
-function drawTime(t)
-  local th = fonts.time:getHeight()
-  local tw = fonts.time:getWidth(ANSWER_STUB)
-  local tx = th/2
-  local ty = field_height-th*1.5
-  gfx.setColor(COLORS.bg)
-  gfx.rectangle("fill", tx, ty, tw, th)
-  gfx.setColor(COLORS.time)
-  gfx.printf(tostring(t), tx, ty, tw, "left")
+function renderResultCard(n, color)
+  local rx = panel_x
+  local ry = field_height - result_height*n
+  gfx.setColor(color)
+  gfx.rectangle("fill", panel_x, ry, panel_width, result_height)
+  gfx.setColor(COLORS.results_border)
+  gfx.rectangle("line", panel_x, ry, panel_width, result_height)
+end
+
+function drawPendingResults()
+  for i, _ in ipairs(CHALLENGES) do
+    renderResultCard(i, COLORS.results_bg)
+  end
+end
+
+function drawSuccessfulResult(n, bonus)
+  renderResultCard(n, COLORS.results_ok)
+  gfx.setFont(fonts.results_score)
+  gfx.setColor(COLORS.results_score)
+  local fh = fonts.results_score:getHeight()
+  local ry = field_height - result_height * (n-0.5) - fh/2
+  gfx.printf(bonus, panel_x, ry, panel_width, "center")
+end
+
+function drawWaitingResult(n)
+  renderResultCard(n, COLORS.results_wait)
+end
+
+function drawFailedResult(n)
+  renderResultCard(n, COLORS.results_fail)
 end
 
 function drawQuestion(question, answer, is_valid) 

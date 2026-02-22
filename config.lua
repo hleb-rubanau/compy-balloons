@@ -7,7 +7,15 @@ COLORS = {
   answer_fail = Color[Color.red],
   time = Color[Color.yellow],
   counters = Color[Color.yellow],
-  splash = Color[Color.yellow]
+  splash = Color[Color.yellow],
+  score = Color[Color.blue],
+  score_bg = Color[Color.white],
+  results_bg = {0.5, 0.5, 0.5},
+  results_ok = Color[Color.green],
+  results_fail = { 1.0, 0.25, 0 },
+  results_wait = Color[Color.yellow],
+  results_border = Color[Color.blue],
+  results_score = Color[Color.white]
 }
 
 ANSWER_TIMEOUT=10
@@ -22,7 +30,9 @@ FONTS = {
   answer  = 22,
   time  = 32,
   counters = 32,
-  splash = 64
+  splash = 64,
+  score = 32 ,
+  results_score = 24
 }
 
 ANSWER_STUB='     '
