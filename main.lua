@@ -12,6 +12,7 @@ function startChallenge()
   current_answer_valid = false
   current_x = get_random_x()
   current_y = 0
+  time = 0
   if not current_challenge then
     return startGame()
   end
