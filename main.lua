@@ -51,6 +51,7 @@ function on_input(txt)
     if current_answer_valid then
       return 
     end
+    curret_answer = txt
     current_answer_valid = (txt==current_challenge.answer)
     if current_answer_valid then
       return on_valid_answer()
