@@ -6,8 +6,8 @@ require("variables")
 require("debugfunc")
 
 function gameOver()
-  local tmpl = "Your score: %s\nClick to restart"
-  local msg = fmt(tmpl, counters.score)
+  local tmpl = "Your score: %s (%s/%s)\nClick to restart"
+  local msg = fmt(tmpl, counters.score, counters.win, counters.win+counters.loss)
   drawSplash(msg)
   on_click = startGame
   on_update = nil
