@@ -38,16 +38,25 @@ function debug_nextchallenge()
   drawBackground()
   if c then
     drawSamples(c.question, c.answer, "wrong")
+  else
+    startGame()
   end
 end
 
-function init()
-  -- activate user input
+function startGame()
   next_challenge = challenges()
+  current_challenge = nil
   time = 0
+  counters['win']=0
+  counters['loss']=0
+  drawBackground()
+end
+
+function init()
+  startGame()
+  -- activate user input
   userinp=user_input()
   love.update = check_input
-  drawBackground()
 end
 
 function on_input(txt)
