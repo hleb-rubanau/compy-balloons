@@ -9,7 +9,7 @@ COLORS = {
   counters = Color[Color.yellow],
 }
 
-ANSWER_TIMEOUT = 5
+ANSWER_TIMEOUT=5
 WIN_DELAY=3
 LOSS_DELAY=3
 
