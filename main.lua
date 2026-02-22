@@ -1,7 +1,7 @@
 require("config")
 require("constants")
 require("graphics")
-
+require("debug")
 
 function init()
   -- activate user input
@@ -25,4 +25,5 @@ end
 
 function love.update(dt)
   do_it()
+  safe_exec( do_it )
 end
