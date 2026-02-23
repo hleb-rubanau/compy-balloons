@@ -3,6 +3,7 @@ require("challenges")
 require("constants")
 require("graphics")
 require("variables")
+require("debugfunc")
 
 function current_bonus()
   return ANSWER_TIMEOUT - math.floor(time)
@@ -22,10 +23,10 @@ function reset_challenge()
   current_x = get_random_x()
   current_y = 0
   time = 0
-  current_bonus = nil
   current_result_number = current_result_number + 1
   results[current_result_number] = drawWaitingResult
-  challenge_renderer = drawQuestion
+  input_text("Your answer: ", nil)
+  challenge_renderer = waiting_renderer(current_question)
 end
 
 function gameOverSplash(score, win, loss)
@@ -48,7 +49,6 @@ function startChallenge()
     return gameOver()
   end
   reset_challenge()
-  input_text("Your answer: ", nil)
   on_update = wait_for_input
 end
 
@@ -79,10 +79,21 @@ function startGame()
   on_draw = drawGameActive
 end
 
-function success_renderer(bonus_size)
+function wrong_renderer(q, a)
+  return function(bonus)
+    drawQuestion(q, a, bonus)
+  end
+end
+
+function waiting_renderer(q)
+  return function(bonus)
+    drawQuestion(q, bonus)
+  end
+end
+
+function valid_renderer(q, a, bonus_size)
   return function()
-    drawFieldBackground()
-    drawProperAnswer(current_question, current_answer, bonus_size)
+    drawProperAnswer(q, a, bonus_size)
   end
 end
 
@@ -91,8 +102,11 @@ function drawGameActive()
   drawScore(counters.score)
   drawResults()
   if challenge_renderer then
-    -- challenge_renderer()
-    safe_exec(challenge_renderer)
+    local b = safe_exec(current_bonus)
+    safe_exec(challenge_renderer, b)
+    --local b = current_bonus()
+    --challenge_renderer( b )
+    --challenge_renderer( current_bonus() )
   end
 end
 
@@ -115,22 +129,13 @@ function on_input(txt)
     safe_exec(input_text,txt)
     current_answer = txt
     current_answer_valid = (txt == current_challenge.answer)
+    local q = current_question
     if current_answer_valid then
+      current_challenge_renderer = valid_renderer(q, txt)
       return on_valid_answer()
     end
-    current_challenge_renderer = drawWrongAnswer
+    current_challenge_renderer = wrong_renderer(q, txt)
   end
-end
-
-function draw_waiting()
-  next_redraw = time + (1 / FPS)
-  drawFieldBackground()
-  local bonus = current_bonus()
-  local q = current_question
-  if not current_answer then
-    return drawQuestion(q, bonus)
-  end
-  drawWrongAnswer(q, current_answer, bonus)
 end
 
 function wait_before_next(dt)
