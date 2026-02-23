@@ -43,7 +43,7 @@ function startChallenge()
     return gameOver()
   end
   reset_challenge()
-  on_update = on_tick
+  on_update = wait_for_input
 end
 
 function startGame()
@@ -107,7 +107,7 @@ function on_timeout()
   startChallenge()
 end
 
-function on_tick(dt)
+function wait_for_input(dt)
   time = time+dt
   if time > ANSWER_TIMEOUT then
     return on_timeout()
@@ -129,15 +129,13 @@ end
 
 function love.update(dt)
   if on_update then
-    --on_tick(dt)
-    safe_exec(on_update,dt)
+    on_update(dt)
   end
 end
 
 function love.singleclick()
   if on_click then
-    --on_click()
-    safe_exec( on_click )
+    on_click()
   end
 end
 
@@ -147,4 +145,4 @@ function init()
   on_click = startGame
 end
 
-safe_exec(init)
+init()
