@@ -9,10 +9,10 @@ function current_bonus()
 end
 
 function reset_counters()
-  counters.win=0
-  counters.loss=0
-  counters.score=0
-  current_result_number=0
+  counters.win = 0
+  counters.loss = 0
+  counters.score = 0
+  current_result_number = 0
 end
 
 function reset_challenge()
@@ -31,13 +31,13 @@ function gameOver()
   on_update = nil
   local tmpl = "Your score: %s (%s/%s)\nClick to restart"
   local c = counters
-  local msg = fmt(tmpl, c.score, c.win, c.win+c.loss)
+  local msg = fmt(tmpl, c.score, c.win, c.win + c.loss)
   drawSplash(msg)
   on_click = startGame
 end
 
 function startChallenge()
-  current_challenge = next_challenge()  
+  current_challenge = next_challenge()
   if not current_challenge then
     return gameOver()
   end
@@ -74,7 +74,7 @@ function on_input(txt)
       return 
     end
     current_answer = txt
-    current_answer_valid = (txt==current_challenge.answer)
+    current_answer_valid = (txt == current_challenge.answer)
     if current_answer_valid then
       return on_valid_answer()
     end
@@ -82,8 +82,8 @@ function on_input(txt)
 end
 
 function draw_waiting()
-  next_redraw = time + (1/FPS)
-  drawFieldBackground() 
+  next_redraw = time + (1 / FPS)
+  drawFieldBackground()
   local bonus = current_bonus()
   local q = current_question
   if not current_answer then
@@ -92,9 +92,9 @@ function draw_waiting()
   drawWrongAnswer(q, current_answer, bonus)
 end
 
-function wait_before_next(dt) 
-  wait_time = wait_time+dt
-  if wait_time > WIN_DELAY then
+function wait_before_next(dt)
+  wait_time = wait_time + dt
+  if WIN_DELAY < wait_time then
     startChallenge()
   end
 end
@@ -107,11 +107,11 @@ function on_timeout()
 end
 
 function wait_for_input(dt)
-  time = time+dt
-  if time > ANSWER_TIMEOUT then
+  time = time + dt
+  if ANSWER_TIMEOUT < time then
     return on_timeout()
   end
-  if time > next_redraw then
+  if next_redraw < time then
     current_y = field_height * (time / ANSWER_TIMEOUT)
     draw_waiting()
   end
@@ -122,7 +122,7 @@ function check_input()
   if userinp:is_empty() then
     input_text()
   else
-    on_input( userinp() )
+    on_input(userinp())
   end
 end
 
@@ -139,8 +139,8 @@ function love.singleclick()
 end
 
 function init()
-  userinp=user_input()
-  drawSplash('Click to start')
+  userinp = user_input()
+  drawSplash("Click to start")
   on_click = startGame
 end
 
