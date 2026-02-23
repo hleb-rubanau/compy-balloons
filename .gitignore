@@ -1,0 +1,3 @@
+notrack/
+.env
+justfile
