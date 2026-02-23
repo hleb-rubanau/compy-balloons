@@ -1,5 +1,6 @@
 require("config")
 require("constants")
+require("variables")
 
 function get_random_x()
   math.randomseed(os.time())
@@ -78,8 +79,7 @@ function answer_text_position(bh, ah, qh, qw)
   return answer_x, answer_y
 end
 
-function drawPendingBonus(x, y, score, color)
-  local bonus = ANSWER_TIMEOUT - math.floor(time)
+function drawPendingBonus(x, y, bonus, color)
   local tw = fonts.score:getWidth(tostring(bonus))
   local th = fonts.score:getHeight()
   gfx.setColor(color)
@@ -95,8 +95,9 @@ function adjust_x(x, leftmost, rightmost)
   if 0 < dx then
     x = x - 2 * dx
   end
-  if x < leftmost then
-    x = x + leftmost
+  dx = leftmost - x
+  if 0 < dx then
+    x = x + 2 * dx
   end
   return x
 end
