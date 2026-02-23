@@ -1,6 +1,5 @@
 require("config")
 require("constants")
-require("debugfunc")
 
 function get_random_x()
   math.randomseed(os.time())
@@ -25,7 +24,6 @@ function maxStringWidth(strings, font)
   end
   return maxWidth
 end
-
 
 function drawBackground() 
   gfx.setColor(COLORS.bg)

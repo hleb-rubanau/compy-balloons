@@ -1,9 +1,8 @@
 require("config")
+require("challenges")
 require("constants")
 require("graphics")
-require("challenges")
 require("variables")
-require("debugfunc")
 
 function current_bonus()
   return ANSWER_TIMEOUT - math.floor(time)

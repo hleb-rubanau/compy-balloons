@@ -1,5 +1,3 @@
-require("debugfunc")
-
 CHALLENGES= { }
 
 function add_challenge(q,a)
@@ -24,7 +22,6 @@ function challenges()
   local iterator
   return function() 
     idx = idx +1
-    logdebug("CHALLENGE %s", idx)
     if #CHALLENGES < idx then
       idx = 0
       return nil
