@@ -175,6 +175,10 @@ function drawSuccessfulResult(n, bonus)
   gfx.printf(bonus, panel_x, ry, panel_width, "center")
 end
 
+function drawPendingResult(n)
+  renderResultCard(n, COLORS.results_bg)
+end
+
 function drawWaitingResult(n)
   renderResultCard(n, COLORS.results_wait)
 end
