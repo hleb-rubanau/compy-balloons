@@ -9,31 +9,6 @@ function current_bonus()
   return ANSWER_TIMEOUT - math.floor(time)
 end
 
-
-function gameOver()
-  local tmpl = "Your score: %s (%s/%s)\nClick to restart"
-  local msg = fmt(tmpl, counters.score, counters.win, counters.win+counters.loss)
-  drawSplash(msg)
-  on_click = startGame
-  on_update = nil
-end
-
-function startChallenge()
-  current_challenge = next_challenge()  
-  if not current_challenge then
-    return gameOver()
-  end
-  current_result_number = current_result_number + 1
-  current_question = current_challenge.question
-  current_answer = nil
-  current_answer_valid = false
-  current_x = get_random_x()
-  current_y = 0
-  time = 0
-  drawWaitingResult(current_result_number)
-  redraw()
-end
-
 function reset_counters()
   counters.win=0
   counters.loss=0
@@ -41,16 +16,45 @@ function reset_counters()
   current_result_number=0
 end
 
+function reset_challenge()
+  current_question = current_challenge.question
+  current_answer = nil
+  current_answer_valid = false
+  current_x = get_random_x()
+  current_y = 0
+  time = 0
+  current_result_number = current_result_number + 1
+  drawWaitingResult(current_result_number)
+  draw_waiting()
+end
+
+function gameOver()
+  on_update = nil
+  local tmpl = "Your score: %s (%s/%s)\nClick to restart"
+  local c = counters
+  local msg = fmt(tmpl, c.score, c.win, c.win+c.loss)
+  drawSplash(msg)
+  on_click = startGame
+end
+
+function startChallenge()
+  current_challenge = next_challenge()  
+  if not current_challenge then
+    return gameOver()
+  end
+  reset_challenge()
+  on_update = on_tick
+end
+
 function startGame()
   on_click = nil
   next_challenge = challenges()
   reset_counters()
-  drawPendingResults()
+  drawBackground()
   drawScore(0)
+  drawPendingResults()
   startChallenge()
-  on_update = on_tick
 end
-
 
 function on_valid_answer()
   counters.win = counters.win + 1
@@ -58,14 +62,14 @@ function on_valid_answer()
   counters.score = counters.score + bonus
   drawScore(counters.score)
   drawSuccessfulResult(current_result_number, bonus)
+  drawFieldBackground()
   drawProperAnswer(current_question, current_answer, bonus)
   sfx.wow()
   wait_time = 0
-  redraw()
+  on_update = wait_before_next
 end
 
 function on_input(txt)
-  logdebug("ANSWER: %s", txt)
   if current_challenge then
     if current_answer_valid then
       return 
@@ -78,19 +82,15 @@ function on_input(txt)
   end
 end
 
-function redraw()
+function draw_waiting()
   next_redraw = time + (1/FPS)
   drawFieldBackground() 
   local bonus = current_bonus()
-  if current_answer then
-    if current_answer_valid then
-      return drawProperAnswer(current_question, current_answer, bonus)
-    else
-      return drawWrongAnswer(current_question, current_answer, bonus)
-    end
-  else
-    return drawQuestion(current_question, bonus)
+  local q = current_question
+  if not current_answer then
+    return drawQuestion(q, bonus)
   end
+  drawWrongAnswer(q, current_answer, bonus)
 end
 
 function wait_before_next(dt) 
@@ -108,20 +108,15 @@ function on_timeout()
 end
 
 function on_tick(dt)
-  if current_challenge then
-    if current_answer_valid then
-      return wait_before_next(dt)
-    end
-    time = time+dt
-    if time > ANSWER_TIMEOUT then
-      return on_timeout()
-    end 
-    if time > next_redraw then
-      current_y = field_height * (time / ANSWER_TIMEOUT)
-      redraw()
-    end
-    check_input()
+  time = time+dt
+  if time > ANSWER_TIMEOUT then
+    return on_timeout()
   end
+  if time > next_redraw then
+    current_y = field_height * (time / ANSWER_TIMEOUT)
+    draw_waiting()
+  end
+  check_input()
 end
 
 function check_input()
@@ -133,9 +128,9 @@ function check_input()
 end
 
 function love.update(dt)
-  if on_tick then
+  if on_update then
     --on_tick(dt)
-    safe_exec(on_tick,dt)
+    safe_exec(on_update,dt)
   end
 end
 
