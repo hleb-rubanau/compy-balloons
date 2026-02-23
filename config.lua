@@ -32,7 +32,8 @@ FONTS = {
   counters = 32,
   splash = 64,
   score = 32 ,
-  results_score = 24
+  results_score = 24,
+  hint = 16
 }
 
 ANSWER_STUB='     '

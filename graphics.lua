@@ -2,7 +2,20 @@ require("config")
 require("constants")
 require("debugfunc")
 
-local function maxStringWidth(strings, font)
+function get_random_x()
+  math.randomseed(os.time())
+  return math.random(field_width*0.9)
+end
+
+function calc_text_geometry(font, txt)
+  return font:getWidth(txt), font:getHeight()
+end
+
+function font_h(name)
+  return fonts[name]:getHeight()
+end
+
+function maxStringWidth(strings, font)
   local maxWidth = 0
   for _, s in ipairs(strings) do
       local w = font:getWidth(s)
@@ -12,6 +25,7 @@ local function maxStringWidth(strings, font)
   end
   return maxWidth
 end
+
 
 function drawBackground() 
   gfx.setColor(COLORS.bg)
@@ -23,25 +37,27 @@ function drawFieldBackground()
   gfx.rectangle("fill", 0,0, field_width, field_height)
 end
 
-function drawSplash(txt)  
+function calc_splashbox_geometry(lines, font)
+  local fh = font:getHeight()
+  local box_width = maxStringWidth(lines, font)
+  local box_x = (screen_width - box_width)/2
+  local box_height = #lines * fh + (#lines - 1) * 0.5 *fh
+  local box_y = (field_height - box_height)/2
+  return box_x, box_y, box_width, box_height
+end
+
+function drawSplash(txt)
   local lines = string.split(txt,"\n")
   local f = fonts.splash
   local fh = f:getHeight()
-  local box_height = #lines * fh + (#lines - 1) * 0.5 *fh
-  local box_y = (field_height - box_height)/2
-  local box_width = maxStringWidth(lines, fonts.splash)
-  local box_x = (screen_width - box_width)/2
+  local bx, by, bw, bh = calc_splashbox_geometry(lines, f)
   drawBackground()
   gfx.setColor(COLORS.splash)
   gfx.setFont(f)
   for i,t in ipairs(lines) do
-    local ty = box_y + (i-1)*fh*1.5
-    gfx.printf(t, box_x, ty, box_width, center)
+    local ty = by + (i-1)*fh*1.5
+    gfx.printf(t, bx, ty, bw, center)
   end
-end
-
-function calc_text_geometry(font, txt)
-  return font:getWidth(txt), font:getHeight()
 end
 
 function text_background_geometry(qw, qh, aw, ah)
@@ -76,62 +92,71 @@ function drawPendingBonus(x,y, score, color)
   gfx.printf(bonus, x-tw/2, y-th/2, tw, "center")
 end
 
-function drawQuestionObject(question, answer, score, color)
-  local x,y = current_x, current_y
-  --logdebug("Drawing object at (%s,%s)", x, y)
-  local qw, qh = calc_text_geometry(fonts.question, question)
-  local aw, ah = calc_text_geometry(fonts.answer, ANSWER_STUB)
-  if answer then
-    aw, ah = calc_text_geometry(fonts.answer, answer)
-  end 
-  local bw, bh = text_background_geometry(qw, qh, aw, ah)
-
-  -- prevent off-screen
-  local dx = x + bw + 2*BALLOON_RADIUS - field_width
+function adjust_x(x, leftmost, rightmost)
+  local dx = x-rightmost
   if dx > 0 then
     x = x - 2*dx
   end
-  if x < 2*BALLOON_RADIUS then
-    x = 2*BALLOON_RADIUS
+  if x < leftmost then
+    x = x + leftmost
   end
-  drawPendingBonus(x-BALLOON_RADIUS, y + bh/2, score, color)
-  --logdebug("qw=%s, qh=%s, aw=%s, ah=%s, bw=%s, bh=%s", qw,qh,aw,ah,bw,bh)
-  gfx.setColor(COLORS.question_bg)
-  gfx.rectangle("fill", x, y, bw, bh)
-
-  local qx, qy = question_text_position(bh, qh)
-  gfx.setColor(COLORS.question_fg)
-  gfx.setFont(fonts.question)
-  gfx.printf(question, x+qx, y+qy, qw, "left")
-
-  if answer then
-    local ax, ay = answer_text_position(bh, ah, qh, qw)
-    gfx.setColor(color)
-    gfx.setFont(fonts.answer)
-    gfx.printf(answer, x+ax, y+ay, aw, "left")
-  end
+  return x
 end
 
-function get_random_x()
-  math.randomseed(os.time())
-  return math.random(field_width*0.9)
+function drawQuestionCanvas(x, y, bw, bh)
+  gfx.setColor(COLORS.question_bg)
+  gfx.rectangle("fill", x, y, bw, bh)
+end
+
+function drawQuestionLabel(question, x, y)
+  local f = fonts.question
+  local qw = f:getWidth(question)
+  gfx.setColor(COLORS.question_fg)
+  gfx.setFont(f)
+  gfx.printf(question, x, y, qw, "left")
+end
+
+function drawAnswerLabel(answer, x, y, color)
+  local f = fonts.answer
+  local aw = f:getWidth(answer)
+  gfx.setFont(f)
+  gfx.setColor(color)
+  gfx.printf(answer, x, y, aw, "left")
+end
+
+function drawQuestionObject(question, answer, score, color)
+  local qw, qh = calc_text_geometry(fonts.question, question)
+  local aw, ah = calc_text_geometry(fonts.answer, answer)
+  local bw, bh = text_background_geometry(qw, qh, aw, ah)
+  local fw, br = field_width, BALLOON_RADIUS
+  local qx, qy = question_text_position(bh, qh)
+  local ax, ay = answer_text_position(bh, ah, qh, qw)
+  x = adjust_x(current_x, 2 * br, fw - bw - 2 * br)
+  drawPendingBonus(x-br, current_y + bh/2, score, color)
+  drawQuestionCanvas(x, current_y, bw, bh)
+  drawQuestionLabel(question, x+qx, current_y+qy )
+  drawAnswerLabel(answer, x+ax, current_y+ay, color)
 end
 
 function drawScore(score)
+  local px, sw, pw = panel_x, screen_width, panel_width
+  local hint_vpad = fonts.hint:getHeight()/2
   gfx.setColor(COLORS.score_bg)
-  gfx.rectangle("fill", panel_x, 0, screen_width, panel_width)
+  gfx.rectangle("fill", px, 0, sw, pw)
   gfx.setColor(COLORS.score)
+  gfx.setFont(fonts.hint)
+  gfx.printf("SCORE", px, hint_vpad, pw, "center")
   gfx.setFont(fonts.score)
-  gfx.printf(score, panel_x, score_y, panel_width, "center")
+  gfx.printf(score, px, score_y, pw, "center")
 end
 
 function renderResultCard(n, color)
-  local rx = panel_x
   local ry = field_height - result_height*n
+  local px, pw = panel_x, panel_width
   gfx.setColor(color)
-  gfx.rectangle("fill", panel_x, ry, panel_width, result_height)
+  gfx.rectangle("fill", px, ry, pw, result_height)
   gfx.setColor(COLORS.results_border)
-  gfx.rectangle("line", panel_x, ry, panel_width, result_height)
+  gfx.rectangle("line", px, ry, pw, result_height)
 end
 
 function drawPendingResults()
@@ -142,9 +167,11 @@ end
 
 function drawSuccessfulResult(n, bonus)
   renderResultCard(n, COLORS.results_ok)
-  gfx.setFont(fonts.results_score)
-  gfx.setColor(COLORS.results_score)
-  local fh = fonts.results_score:getHeight()
+  local f = fonts.results_score
+  local c = COLORS.results_score
+  gfx.setFont(f)
+  gfx.setColor(c)
+  local fh = f:getHeight()
   local ry = field_height - result_height * (n-0.5) - fh/2
   gfx.printf(bonus, panel_x, ry, panel_width, "center")
 end
@@ -157,14 +184,14 @@ function drawFailedResult(n)
   renderResultCard(n, COLORS.results_fail)
 end
 
-function drawQuestion(question, score) 
-  drawQuestionObject(question, answer, score, COLORS.results_wait)
+function drawQuestion(q, score)
+  drawQuestionObject(q, ' ', score, COLORS.results_wait)
 end
 
-function drawWrongAnswer(question, answer, score)
-  drawQuestionObject(question, answer, score, COLORS.answer_fail)
+function drawWrongAnswer(q, answer, score)
+  drawQuestionObject(q, answer, score, COLORS.answer_fail)
 end
 
-function drawProperAnswer(question, answer, score)
-  drawQuestionObject(question, answer, score, COLORS.answer_ok)
+function drawProperAnswer(q, answer, score)
+  drawQuestionObject(q, answer, score, COLORS.answer_ok)
 end
