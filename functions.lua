@@ -14,7 +14,7 @@ function sum(iterator)
   return s
 end
 
-function values(t) do
+function values(t) 
   local i, iterator = 0, nil
   function iterator()
     i = i + 1
@@ -29,7 +29,7 @@ function values(t) do
   return iterator
 end
 
-function for_each(scope, callback) do
+function for_each(scope, callback) 
   for item in scope do
     callback(item)
   end

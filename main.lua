@@ -1,6 +1,7 @@
 require("config")
 require("challenges")
 require("constants")
+require("model")
 require("graphics")
 require("debugfunc")
 
@@ -22,7 +23,13 @@ terminal = user_input()
 function callback(name)
   return function(...)
     if callbacks[name] then
-      callbacks[name](...)
+      if love.DEBUG then 
+        local c = callbacks[name]
+        local args = { ... }
+        safe_exec(c, unpack(args))
+      else
+        callbacks[name](...)
+      end
     end
   end
 end
