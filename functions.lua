@@ -1,7 +1,7 @@
 require("debugfunc")
 
 function count(iterator)
-  local c = 0 
+  local c = 0
   for _ in iterator do
     c = c + 1
   end
@@ -16,18 +16,18 @@ function sum(iterator)
   return s
 end
 
-function values(t) 
+function values(t)
   local i, iterator = 0, nil
   function iterator()
     i = i + 1
-    if i>#t then
+    if #t < i then
       return nil
     end
     if t[i] then
-        return t[i]
+      return t[i]
     end
     return iterator()
-  end 
+  end
   return iterator
 end
 
@@ -46,7 +46,7 @@ function each_where(scope, condition)
   return iterator
 end
 
-function for_each(scope, callback) 
+function for_each(scope, callback)
   for item in scope do
     callback(item)
   end
