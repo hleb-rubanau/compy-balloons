@@ -92,14 +92,12 @@ function register_devalue(i, tweak)
 end
 
 function register_win(i)
-  logdebug("registering win: %s",i)
   events.wins[i]=time
   scores.earned[i] = scores.pending[i]
   scores.pending[i]=0
 end
 
 function register_expire(i)
-  logdebug("registering loss: %s",i)
   events.losses[i]=time
   scores.pending[i] = 0
 end
