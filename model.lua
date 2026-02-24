@@ -35,8 +35,8 @@ function reset_events(i)
 end
 
 function reset_scores(i)
-  scores.pending[i]=nil
-  scores.earned[i]=nil
+  scores.pending[i]=0
+  scores.earned[i]=0
 end
 
 function reset_state()
@@ -51,19 +51,29 @@ end
 --- game stats ---
 
 function get_total_score()
-  return sum( values( scores.earned ) )
+  local c = 0
+  for i = 1, #queue do
+    if scores.earned[i] then
+      c = c + scores.earned[i]
+    end
+  end
+  return c
+end
+
+function count_wins()
+  return count_points(queue, events.wins)
+end
+
+function count_losses()
+  return count_points(queue, events.losses)
 end
 
 function get_game_results()
-  local wins_count = count( values(events.wins) )
-  local scores = get_total_score()
-  return scores, wins_count, #queue
+  return get_total_score(), count_wins(), #queue
 end
 
 function game_is_over()
-  local wins = count( values( events.wins ) )
-  local losses = count( values( events.losses ) )
-  return wins+losses == #queue
+  return count_wins() + count_losses() == #queue
 end
 
 --- events handlers ---
@@ -82,14 +92,16 @@ function register_devalue(i, tweak)
 end
 
 function register_win(i)
+  logdebug("registering win: %s",i)
   events.wins[i]=time
   scores.earned[i] = scores.pending[i]
-  scores.pending[i]=nil
+  scores.pending[i]=0
 end
 
 function register_expire(i)
+  logdebug("registering loss: %s",i)
   events.losses[i]=time
-  scores.pending[i] = nil
+  scores.pending[i] = 0
 end
 
 function register_vanish(i)

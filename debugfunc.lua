@@ -61,3 +61,9 @@ function safe_exec_multi(func, ...)
     return unpack(results, 1, results.n)
 end
 
+function debug_state(event, source)
+  local score, wins, total = get_game_results()
+  local losses = count_losses()
+  local is_over = game_is_over()
+  logdebug("%s: %s (score=%s, wins=%s, losses=%s, over=%s)", event, source, score, wins, losses, is_over)
+end

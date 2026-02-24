@@ -23,7 +23,7 @@ function values(t)
     if i>#t then
       return nil
     end
-    if t[i] ~= nil then
+    if t[i] then
         return t[i]
     end
     return iterator()
@@ -58,4 +58,14 @@ function shuffle(list)
     local j = math.random(i)
     list[i], list[j] = list[j], list[i]
   end
+end
+
+function count_points(reference, target)
+  local c = 0
+  for i = 1, #reference do
+    if target[i] then
+      c = c + 1
+    end
+  end
+  return c
 end

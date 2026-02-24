@@ -45,8 +45,9 @@ function game_load()
 end
 
 function game_over()
-  callbacks.click = game_start
   callbacks.update = nil
+  callbacks.click = game_start
+  reset_terminal('Click to restart')
   local score, wins, total = get_game_results()
   callbacks.draw = splashResults(score, wins, total)
 end
@@ -68,7 +69,6 @@ end
 
 function reset_render()
   for i in queued_challenges() do
-    positions[i]=get_random_x()
     render.progress[i]=draw_pending_result
     render.challenges[i]=nil
   end
@@ -111,7 +111,6 @@ function display_answer(txt)
   reset_terminal(msg)
 end
 
-
 --- rules ---
 
 function expire(i)
@@ -122,6 +121,7 @@ function expire(i)
 end
 
 function launch(i)
+  positions[i]=get_random_x()
   register_launch(i)
   set_waiting_renderer(i)
   sfx.ping()
@@ -144,6 +144,7 @@ function win(i)
   set_solved_renderer(i)
   mark_as_solved(i)
   ui_update_score()
+  reset_terminal(STARTING_PROMPT)
 end
 
 --- terminal ---
@@ -178,7 +179,8 @@ function update_game(dt)
   for_each(devaluable(), devalue)
   check_input()
   if game_is_over() then
-    if 0 == count(showing_off()) then
+    local last_flying = count(showing_off())
+    if 0 == last_flying then
       game_over()
     end
   end
