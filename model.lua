@@ -134,10 +134,6 @@ function time_in_flight(i)
   if not events.starts[i] then
     return 0
   end
-  local eol = events.wins[i] or events.losses[i]
-  if eol then
-    return eol - events.starts[i]
-  end
   return time - events.starts[i]
 end 
 
