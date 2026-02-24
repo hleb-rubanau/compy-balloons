@@ -63,6 +63,7 @@ end
 
 --- rendering ---
 
+-- TODO: only works first time and after reading from terminal
 function reset_terminal(txt)
   input_text(txt, nil)
 end
