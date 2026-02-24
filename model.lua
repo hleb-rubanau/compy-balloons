@@ -41,7 +41,7 @@ end
 
 function reset_state()
   reset_queue()
-  for i in 1, #queue do
+  for i = 1, #queue do
     reset_events(i)
     reset_scores(i)
   end
