@@ -73,7 +73,7 @@ function register_launch(i)
 end
 
 function register_devalue(i, tweak)
-  event.devalues[i]=time
+  events.devalues[i]=time
   tweak = tweak or DEVALUE_BY
   local new_score = math.ceil(scores.pending[i]-tweak) 
   scores.pending[i]=math.max(0, new_score)
@@ -130,7 +130,7 @@ function get_earned_bonus(i)
 end
 
 function time_in_flight(i)
-  if not event.starts[i] then
+  if not events.starts[i] then
     return 0
   end
   local eol = events.wins[i] or events.losses[i]
