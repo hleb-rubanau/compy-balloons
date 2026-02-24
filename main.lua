@@ -67,7 +67,7 @@ function reset_terminal(txt)
 end
 
 function reset_render()
-  for i in all_challenges() do
+  for i in queued_challenges() do
     positions[i]=get_random_x()
     render.progress[i]=draw_pending_result
     render.challenges[i]=nil
@@ -190,7 +190,7 @@ function draw_game()
     result_card(i)
   end
   drawFieldBackground()
-  for_each(all_challenges(), render_challenge)
+  for_each(queued_challenges(), render_challenge)
 end
 
 game_load()
