@@ -51,13 +51,12 @@ end
 
 function splash(txt)
   local lines = string.split(txt, "\n")
-  local f = fonts.splash
-  local fh = f:getHeight()
+  local f, fh = fonts.splash, fonts.splash:getHeight()
   local bx, by, bw, bh = calc_splashbox_geometry(lines, f)
   return function()
     drawBackground()
     gfx.setColor(COLORS.splash)
-    gfx.setFont(f)
+    gfx.setFont(fonts.splash)
     for i, t in ipairs(lines) do
       local ty = by + (i - 1) * fh * 1.5
       gfx.printf(t, bx, ty, bw, center)

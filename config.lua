@@ -1,15 +1,15 @@
 ANSWER_TIMEOUT = 10
 
-LAUNCH_DELAY=2.5
-DEFAULT_BONUS=ANSWER_TIMEOUT
-DEVALUE_INTERVAL=1
-DEVALUE_BY=1
+LAUNCH_DELAY = 2.5
+DEFAULT_BONUS = ANSWER_TIMEOUT
+DEVALUE_INTERVAL = 1
+DEVALUE_BY = 1
 WIN_DELAY = 3
 
-WELCOME_MESSAGE="Click to start"
-RESULTS_MESSAGE="Your score: %s (%s/%s)\nClick to restart"
-STARTING_PROMPT="Type and press <Enter>"
-GAME_PROMPT="Your answer: <%s>"
+WELCOME_MESSAGE = "Click to start"
+RESULTS_MESSAGE = "Your score: %s (%s/%s)\nClick to restart"
+STARTING_PROMPT = "Type and press <Enter>"
+GAME_PROMPT = "Your answer: <%s>"
 
 SCREEN_VPAD = 0.1
 BALLOON_RADIUS = 24

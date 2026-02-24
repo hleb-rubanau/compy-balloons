@@ -23,7 +23,7 @@ terminal = user_input()
 function callback(name)
   return function(...)
     if callbacks[name] then
-      if love.DEBUG then 
+      if love.DEBUG then
         local c = callbacks[name]
         local args = { ... }
         safe_exec(c, unpack(args))
@@ -38,16 +38,15 @@ function game_load()
   callbacks.click = game_start
   callbacks.update = nil
   callbacks.draw = splash(WELCOME_MESSAGE)
-  
-  love.draw = callback('draw')
-  love.update = callback('update')
-  love.singleclick = callback('click')
+  love.draw = callback("draw")
+  love.update = callback("update")
+  love.singleclick = callback("click")
 end
 
 function game_over()
   callbacks.update = nil
   callbacks.click = game_start
-  reset_terminal('Click to restart')
+  reset_terminal("Click to restart")
   local score, wins, total = get_game_results()
   callbacks.draw = splashResults(score, wins, total)
 end
@@ -70,8 +69,8 @@ end
 
 function reset_render()
   for i in queued_challenges() do
-    render.progress[i]=draw_pending_result
-    render.challenges[i]=nil
+    render.progress[i] = draw_pending_result
+    render.challenges[i] = nil
   end
   reset_terminal(STARTING_PROMPT)
 end
@@ -80,31 +79,31 @@ function set_waiting_renderer(i)
   local q = get_question(i)
   local b = get_pending_bonus(i)
   local r = unanswered_challenge_renderer(q, b)
-  render.challenges[i]=r
+  render.challenges[i] = r
 end
 
 function set_solved_renderer(i)
   local q, a = get_question_answer(i)
   local b = get_earned_bonus(i)
   local r = solved_challenge_renderer(q, a, b)
-  render.challenges[i]=r
+  render.challenges[i] = r
 end
 
-function mark_as_launched(i)  
-  render.progress[i]=draw_waiting_result
+function mark_as_launched(i)
+  render.progress[i] = draw_waiting_result
 end
 
 function mark_as_failed(i)
-  render.progress[i]=draw_failed_result
+  render.progress[i] = draw_failed_result
 end
 
 function mark_as_solved(i)
   local b = get_earned_bonus(i)
-  render.progress[i]=successful_result_renderer(b)
+  render.progress[i] = successful_result_renderer(b)
 end
 
 function ui_update_score()
-  render.score = score_renderer( get_total_score() )
+  render.score = score_renderer(get_total_score())
 end
 
 function display_answer(txt)
@@ -116,22 +115,22 @@ end
 
 function expire(i)
   sfx.boom()
-  register_expire(i)  
-  render.challenges[i]=nil
+  register_expire(i)
+  render.challenges[i] = nil
   mark_as_failed(i)
 end
 
 function launch(i)
-  positions[i]=get_random_x()
+  positions[i] = get_random_x()
   register_launch(i)
   set_waiting_renderer(i)
   sfx.ping()
   mark_as_launched(i)
 end
 
-function vanish(i) 
+function vanish(i)
   register_vanish(i)
-  render.challenges[i]=nil
+  render.challenges[i] = nil
 end
 
 function devalue(i)
@@ -163,17 +162,17 @@ end
 function render_challenge(i)
   local renderer = render.challenges[i]
   if not renderer then
-    return
+    return 
   end
   local x = positions[i]
   local y = field_height * current_progress(i)
-  renderer(x,y)
+  renderer(x, y)
 end
 
 --- main loops ---
 
 function update_game(dt)
-  time = time+dt
+  time = time + dt
   for_each(expirable(), expire)
   for_each(vanishable(), vanish)
   for_each(launchable(), launch)

@@ -21,22 +21,22 @@ scores = {
 
 function reset_queue()
   for i = 1, #CHALLENGES do
-    queue[i]=i
+    queue[i] = i
   end
   shuffle(queue)
 end
 
 function reset_events(i)
-  events.starts[i]=nil
-  events.wins[i]=nil
-  events.losses[i]=nil
-  events.vanishes[i]=nil
-  events.devalues[i]=nil
+  events.starts[i] = nil
+  events.wins[i] = nil
+  events.losses[i] = nil
+  events.vanishes[i] = nil
+  events.devalues[i] = nil
 end
 
 function reset_scores(i)
-  scores.pending[i]=0
-  scores.earned[i]=0
+  scores.pending[i] = 0
+  scores.earned[i] = 0
 end
 
 function reset_state()
@@ -79,51 +79,50 @@ end
 --- events handlers ---
 
 function register_launch(i)
-  scores.pending[i]=starting_score(i)
-  events.starts[i]=time
+  scores.pending[i] = starting_score(i)
+  events.starts[i] = time
 end
 
 function register_devalue(i, tweak)
-  events.devalues[i]=time
+  events.devalues[i] = time
   tweak = tweak or DEVALUE_BY
-  local new_score = math.ceil(scores.pending[i]-tweak) 
-  scores.pending[i]=math.max(0, new_score)
+  local new_score = math.ceil(scores.pending[i] - tweak)
+  scores.pending[i] = math.max(0, new_score)
   return scores.pending[i]
 end
 
 function register_win(i)
-  events.wins[i]=time
+  events.wins[i] = time
   scores.earned[i] = scores.pending[i]
-  scores.pending[i]=0
+  scores.pending[i] = 0
 end
 
 function register_expire(i)
-  events.losses[i]=time
+  events.losses[i] = time
   scores.pending[i] = 0
 end
 
 function register_vanish(i)
-  events.vanishes[i]=time
+  events.vanishes[i] = time
 end
 
 --- challenge attribution ---
 
 function starting_score()
   return DEFAULT_BONUS
-end 
-
+end
 
 function get_question(i)
-  return CHALLENGES[ queue[i] ].question
+  return CHALLENGES[queue[i]].question
 end
 
 function get_answer(i)
-  return CHALLENGES[ queue[i] ].answer
+  return CHALLENGES[queue[i]].answer
 end
 
 function get_question_answer(i)
   local q = get_question(i)
-  local a = get_answer(i) 
+  local a = get_answer(i)
   return q, a
 end
 
@@ -145,7 +144,7 @@ function time_in_flight(i)
     return 0
   end
   return time - events.starts[i]
-end 
+end
 
 function current_progress(i)
   return time_in_flight(i) / ANSWER_TIMEOUT
@@ -164,36 +163,36 @@ function is_launched(i)
 end
 
 function is_launchable(i)
-  if not(events.starts[i]) then
-    return time > (i-1)*LAUNCH_DELAY
+  if not (events.starts[i]) then
+    return (i - 1) * LAUNCH_DELAY < time
   end
 end
 
 function is_answerable(i)
   if is_launched(i) then
-    local is_not_won = not(events.wins[i])
-    local is_not_lost = not(events.losses[i])
+    local is_not_won = not (events.wins[i])
+    local is_not_lost = not (events.losses[i])
     return is_not_won and is_not_lost
   end
 end
 
 function is_devaluable(i)
   if is_answerable(i) then
-    return time_since_devalue(i)>DEVALUE_INTERVAL
+    return DEVALUE_INTERVAL < time_since_devalue(i)
   end
 end
 
-function is_expirable(i) 
+function is_expirable(i)
   if is_answerable(i) then
-    return time_in_flight(i) > ANSWER_TIMEOUT
+    return ANSWER_TIMEOUT < time_in_flight(i)
   end
 end
 
 function is_vanishable(i)
   local win_time = events.wins[i]
   if win_time then
-    if (time > win_time + WIN_DELAY) then
-      return not(events.vanishes[i])
+    if (win_time + WIN_DELAY < time) then
+      return not (events.vanishes[i])
     end
   end
 end
@@ -213,7 +212,7 @@ function queued_challenges()
   local i = 0
   return function()
     i = i + 1
-    if i > #queue then
+    if #queue < i then
       return nil
     end
     return i
@@ -221,11 +220,11 @@ function queued_challenges()
 end
 
 function challenges_where(condition)
-  return each_where( queued_challenges(), condition )
+  return each_where(queued_challenges(), condition)
 end
 
-
 --- dynamic scopes ---
+
 function launchable()
   return challenges_where(is_launchable)
 end
@@ -253,4 +252,3 @@ end
 function showing_off()
   return challenges_where(is_showing_off)
 end
-
