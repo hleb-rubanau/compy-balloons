@@ -194,7 +194,7 @@ end
 --- scope iterators ---
 
 function queued_challenges()
-  local idx = 0
+  local i = 0
   return function()
     i = i + 1
     if i > #queue then
