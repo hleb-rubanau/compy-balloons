@@ -1,6 +1,5 @@
 require("config")
 require("constants")
-require("variables")
 
 function get_random_x()
   math.randomseed(os.time())

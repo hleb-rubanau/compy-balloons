@@ -2,7 +2,6 @@ require("config")
 require("challenges")
 require("constants")
 require("graphics")
-require("variables")
 require("debugfunc")
 
 positions = { }
