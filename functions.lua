@@ -2,7 +2,7 @@ require("debugfunc")
 
 function count(iterator)
   local c = 0 
-  for _ in iterator() do
+  for _ in iterator do
     c = c + 1
   end
   return c

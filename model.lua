@@ -61,8 +61,9 @@ function get_game_results()
 end
 
 function game_is_over()
-  local finishes = count(events.wins)+count(events.losses)
-  return finishes == #queue 
+  local wins = count( values( events.wins ) )
+  local losses = count( values( events.losses ) )
+  return wins+losses == #queue
 end
 
 --- events handlers ---
