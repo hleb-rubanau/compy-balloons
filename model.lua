@@ -57,7 +57,7 @@ end
 function get_game_results()
   local wins_count = count( values(events.wins) )
   local scores = get_total_score()
-  return score, wins_count, #queue
+  return scores, wins_count, #queue
 end
 
 function game_is_over()
