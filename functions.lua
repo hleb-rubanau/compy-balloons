@@ -21,7 +21,6 @@ function values(t)
   function iterator()
     i = i + 1
     if i>#t then
-      logdebug("END iteration")
       return nil
     end
     if t[i] ~= nil then
