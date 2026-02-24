@@ -85,7 +85,7 @@ end
 function set_solved_renderer(i)
   local q, a = get_question_answer(i)
   local b = get_earned_bonus(i)
-  local r = solved_challenge_renderer(q, a, bonus)
+  local r = solved_challenge_renderer(q, a, b)
   render.challenges[i]=r
 end
 
