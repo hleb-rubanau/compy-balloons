@@ -9,7 +9,7 @@ events = {
   wins = { },
   losses = { },
   vanishes = { },
-  devalues = {}
+  devalues = { }
 }
 
 scores = {
@@ -127,7 +127,7 @@ function get_pending_bonus(i)
   return scores.pending[i]
 end
 function get_earned_bonus(i)
-  return scores.pending[i]
+  return scores.earned[i]
 end
 
 function time_in_flight(i)
