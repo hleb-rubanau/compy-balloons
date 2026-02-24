@@ -1,3 +1,5 @@
+require("debugfunc")
+
 function count(iterator)
   local c = 0 
   for _ in iterator() do
@@ -8,7 +10,7 @@ end
 
 function sum(iterator)
   local s = 0
-  for x in iterator() do  
+  for x in iterator do
     s = s + x
   end
   return s
@@ -19,6 +21,7 @@ function values(t)
   function iterator()
     i = i + 1
     if i>#t then
+      logdebug("END iteration")
       return nil
     end
     if t[i] ~= nil then
