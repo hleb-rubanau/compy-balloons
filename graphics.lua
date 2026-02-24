@@ -15,15 +15,20 @@ function font_h(name)
   return fonts[name]:getHeight()
 end
 
-function maxStringWidth(strings, font)
-  local maxWidth = 0
+function max_string_width(strings, font)
+  local max_width = 0
   for _, s in ipairs(strings) do
     local w = font:getWidth(s)
-    if maxWidth < w then
-      maxWidth = w
+    if max_width < w then
+      max_width = w
     end
   end
-  return maxWidth
+  return max_width
+end
+
+function splashResults(score, wins, total)
+  local msg = fmt(RESULTS_MESSAGE, score, wins, total)
+  return splash(msg)
 end
 
 function drawBackground()
@@ -38,24 +43,26 @@ end
 
 function calc_splashbox_geometry(lines, font)
   local fh = font:getHeight()
-  local box_width = maxStringWidth(lines, font)
+  local box_width = max_string_width(lines, font)
   local box_x = (screen_width - box_width) / 2
   local box_height = #lines * fh + (#lines - 1) * 0.5 * fh
   local box_y = (field_height - box_height) / 2
   return box_x, box_y, box_width, box_height
 end
 
-function drawSplash(txt)
+function splash(txt)
   local lines = string.split(txt, "\n")
   local f = fonts.splash
   local fh = f:getHeight()
   local bx, by, bw, bh = calc_splashbox_geometry(lines, f)
-  drawBackground()
-  gfx.setColor(COLORS.splash)
-  gfx.setFont(f)
-  for i, t in ipairs(lines) do
-    local ty = by + (i - 1) * fh * 1.5
-    gfx.printf(t, bx, ty, bw, center)
+  return function()
+    drawBackground()
+    gfx.setColor(COLORS.splash)
+    gfx.setFont(f)
+    for i, t in ipairs(lines) do
+      local ty = by + (i - 1) * fh * 1.5
+      gfx.printf(t, bx, ty, bw, center)
+    end
   end
 end
 
@@ -123,18 +130,30 @@ function drawAnswerLabel(answer, x, y, color)
   gfx.printf(answer, x, y, aw, "left")
 end
 
-function drawQuestionObject(question, answer, score, color)
-  local qw, qh = calc_text_geometry(fonts.question, question)
-  local aw, ah = calc_text_geometry(fonts.answer, answer)
-  local bw, bh = text_background_geometry(qw, qh, aw, ah)
-  local fw, br = field_width, BALLOON_RADIUS
+function label_text_positions(bh, qh, qw, ah)
   local qx, qy = question_text_position(bh, qh)
   local ax, ay = answer_text_position(bh, ah, qh, qw)
-  x = adjust_x(current_x, 2 * br, (fw - bw) - 2 * br)
-  drawPendingBonus(x - br, current_y + bh / 2, score, color)
-  drawQuestionCanvas(x, current_y, bw, bh)
-  drawQuestionLabel(question, x + qx, current_y + qy)
-  drawAnswerLabel(answer, x + ax, current_y + ay, color)
+  return qx, qy, ax, ay
+end
+
+function label_text_geometries(question, answer)
+  local qw, qh = calc_text_geometry(fonts.question, question)
+  local aw, ah = calc_text_geometry(fonts.answer, answer)
+  return qw, qh, aw, ah
+end
+
+function challengeRenderer(question, answer, score, color)
+  local qw, qh, aw, ah = label_text_geometries(question, answer)
+  local bw, bh = text_background_geometry(qw, qh, aw, ah)
+  local qx, qy, ax, ay = label_text_positions(bh, qh, qw, ah)
+  local fw, br = field_width, BALLOON_RADIUS
+  return function(x, y)
+    x = adjust_x(x, 2 * br, (fw - bw) - 2 * br)
+    drawPendingBonus(x - br, y + bh / 2, score, color)
+    drawQuestionCanvas(x, y, bw, bh)
+    drawQuestionLabel(question, x + qx, y + qy)
+    drawAnswerLabel(answer, x + ax, y + ay, color)
+  end
 end
 
 function drawScore(score)
@@ -147,6 +166,12 @@ function drawScore(score)
   gfx.printf("SCORE", px, hint_vpad, pw, "center")
   gfx.setFont(fonts.score)
   gfx.printf(score, px, score_y, pw, "center")
+end
+
+function score_renderer(score)
+  return function()
+    drawScore(score)
+  end
 end
 
 function renderResultCard(n, color)
@@ -164,37 +189,41 @@ function drawPendingResults()
   end
 end
 
-function drawSuccessfulResult(n, bonus)
-  renderResultCard(n, COLORS.results_ok)
+function successful_result_renderer(bonus)
   local f = fonts.results_score
   local c = COLORS.results_score
-  gfx.setFont(f)
-  gfx.setColor(c)
   local fh = f:getHeight()
-  local ry = (field_height - result_height * (n - 0.5)) - fh / 2
-  gfx.printf(bonus, panel_x, ry, panel_width, "center")
+  local bottom = field_height
+  local px, pw, rh = panel_x, panel_width, result_height
+  return function(n)
+    renderResultCard(n, COLORS.results_ok)
+    gfx.setFont(f)
+    gfx.setColor(c)
+    local ry = (bottom - rh * (n - 0.5)) - fh / 2
+    gfx.printf(bonus, px, ry, pw, "center")
+  end
 end
 
-function drawPendingResult(n)
+function draw_pending_result(n)
   renderResultCard(n, COLORS.results_bg)
 end
 
-function drawWaitingResult(n)
+function draw_waiting_result(n)
   renderResultCard(n, COLORS.results_wait)
 end
 
-function drawFailedResult(n)
+function draw_failed_result(n)
   renderResultCard(n, COLORS.results_fail)
 end
 
-function drawQuestion(q, score)
-  drawQuestionObject(q, " ", score, COLORS.results_wait)
+function unanswered_challenge_renderer(q, score)
+  return challengeRenderer(q, " ", score, COLORS.results_wait)
 end
 
-function drawWrongAnswer(q, answer, score)
-  drawQuestionObject(q, answer, score, COLORS.answer_fail)
+function mistaken_challenge_renderer(q, answer, score)
+  return challengeRenderer(q, answer, score, COLORS.answer_fail)
 end
 
-function drawProperAnswer(q, answer, score)
-  drawQuestionObject(q, answer, score, COLORS.answer_ok)
+function solved_challenge_renderer(q, answer, score)
+  return challengeRenderer(q, answer, score, COLORS.answer_ok)
 end

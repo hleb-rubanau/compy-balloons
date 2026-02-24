@@ -1,3 +1,7 @@
+queue = {}
+
+------------
+
 time = 0
 wait_time = 0
 next_redraw = 0
@@ -15,3 +19,5 @@ on_update = nil
 on_draw = nil
 results = { }
 challenge_renderer = nil
+renderers = { }
+active_challenges = { }
