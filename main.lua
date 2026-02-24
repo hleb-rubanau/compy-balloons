@@ -6,9 +6,7 @@ require("debugfunc")
 
 positions = { }
 render = {
-  field = nil,
   score = nil,
-  panel = nil
   progress = { },
   challenges = { }
 }
