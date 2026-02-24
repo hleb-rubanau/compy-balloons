@@ -32,6 +32,21 @@ function values(t)
   return iterator
 end
 
+function each_where(scope, condition)
+  local iterator
+  function iterator()
+    local next_item = scope()
+    if (nil == next_item) then
+      return nil
+    end
+    if condition(next_item) then
+      return next_item
+    end
+    return iterator()
+  end
+  return iterator
+end
+
 function for_each(scope, callback) 
   for item in scope do
     callback(item)
