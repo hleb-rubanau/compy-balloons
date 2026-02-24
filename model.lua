@@ -188,6 +188,15 @@ function is_vanishable(i)
   end
 end
 
+function is_showing_off(i)
+  local win_time = events.wins[i]
+  if win_time then
+    local not_expired = time_in_flight(i) < ANSWER_TIMEOUT
+    local yet_no_vanish = time < win_time + WIN_DELAY
+    return not_expired and yet_no_vanish
+  end
+end
+
 --- scope iterators ---
 
 function queued_challenges()
@@ -229,5 +238,9 @@ end
 
 function new_matches(txt)
   return each_where(answerable(), validator(txt))
+end
+
+function showing_off()
+  return challenges_where(is_showing_off)
 end
 

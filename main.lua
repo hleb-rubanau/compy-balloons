@@ -178,7 +178,7 @@ function update_game(dt)
   for_each(devaluable(), devalue)
   check_input()
   if game_is_over() then
-    if 0 == count(vanishable()) then  
+    if 0 == count(showing_off()) then
       game_over()
     end
   end
