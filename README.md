@@ -2,6 +2,17 @@
 
 ## Gameplay
 
+User observes 'balloons' with questions (further named challenges) that flow through game field, being launched at predefined intervals.
+
+When user types answer, and it matches the correct answer for some of currently flowing challenges, relevant challenge is 'won', and bonus scores are recorded.
+
+Challenges which do not get proper answer while flowing, expire and disappear when they reach the bottom of the game field.
+
+Progress bar is used to represent overall set of challenges and their state (pending, active, won, lost).
+
+When all challenges are either 'won' or expired, game ends, total score becomes final result, final splash screen is displayed.
+
+
 ## Architecture
 
 ### Challenge lifecycle
@@ -25,15 +36,15 @@ Instead we have:
 
 Indeces of the queue become universal identifier of challenge in the context of particular game.
 
-I.e. for N-th event we use N to reference:
-1) an N-th renderer in renderers list
+I.e. for N-th challenge in the queue we use N to also reference:
+1) an N-th renderer function in renderers list
 2) an N-th card in progress bar
-3) an N-th record in pending/eaarned scores lists
-4) an N-th record in the lists of events of particular type (e.g. N-th record in the list of 'starts', in the llist of 'wins' etc.)
+3) an N-th record in lists of pending/earned scores
+4) an N-th record in the lists of events of particular type (e.g. N-th item in the list of 'starts', in the list of 'wins' etc.)
 
 ## Model (model.lua)
 
-Model encapsulates queue object, supporting data object (events/scores), and all logic of tracking events, timeouts, bonuses.
+Model encapsulates queue object, supporting data objects (events/scores), and all logic of tracking events, timeouts, bonuses.
 
 Model exposes methods to initialize game state, register specific 'events', and to get the subset of queue corresponding to specific condition (e.g. all 'answerable' or all 'launchable' challenges)
 
@@ -41,10 +52,12 @@ Model exposes methods to initialize game state, register specific 'events', and 
 
 Screen is organized into three parts (beyond terminal)
 * Main field (where challenge visualizations are flowing)
-* Score table (which displays overall score)
+* Score label (which displays overall score)
 * Progress bar (which displays a 'card' for each challenge in the queue, changing color and view as challenge is started, won, or loss)
 
 View functions are expected to be isolated from game state tracking. They are invoked with all required parameters (e.g. they know how to draw a challenge object with proper answer, but they do not bother qhere question and answer come from, or how proper answer was detected, or how desired  coordinates were calculated).
+
+Game also actively uses currying -- i.e. when specific challenge changes state (e.g. is devalued), controller (described below) invokes a factory function that accepts question and new bonus value, to generate the renderer function that draws this specific combination of question+bonus in predefined style (e.g. unanswered) while accepting coordinates as dynamic parameters. This allows to use returned renderer with changing coordinates, but without controller being further concerned about what exactly and how is being drawn by the renderer.
 
 ## Controller (main.lua)
 
@@ -52,13 +65,25 @@ Controller ties model and view together.
 
 It itself maintans two tables:
 
-1) positions (tracking random horizontal offset of each challenge )
-2) renderers -- a structure of functions responsible for drawing the challenge in game field, cards in progress bar, scoreboard
+1) positions (tracking random horizontal offset of each challenge, calculated at challenge launch)
+2) renderers -- a collection of functions responsible for drawing the various visual elements: specific challenge in game field, specific card in progress bar, score label, or splash screen.
 
+Whenever game changes state (typically due to changes in challenge statuses), controller updates particular renderers with new dynamically generated functions, reflecting the desired changes in visualization (progress card decoration, displayed total score, flowing challenge representation)
 
-And it runs two loops:
+### Controller's loops
 
-1) Update loop queries the model to see if new events have to be registered. Also, depending on the event, it changes the renderers in table (e.g. when win happened and score was updated from X to Y, it replaces scoreboard renderer from one which draws X to one which draws Y ; or when item is launched it updates the card renderer in progress bar, and sets challenge renderer in game field; when challenge is timed out, its in-field renderer is set to nil, etc...)
+Controller runs two loops and one callback:
 
-2) redraw the field, invoking all non-nil renderers in the renderers table (which would draw the scoreboard, cards in progress bar, challenge objects for every active challenge)
+1) `update` loop queries the model and validates the terminal input to see if state of any challenges or state of the overall game has to be changed. This is typically done by invocation of action-functions such as `expire`, `launch` etc. which are responsible for registering changes (new events) with the model, updating renderers functions to change visualization, and emitting sound effects.
+
+2) `draw` loop redraws the game field, invoking all non-nil renderers in the renderers collection (which would draw the score label, cards in progress bar, challenge objects for every active challenge)
+
+### Controller's action-functions
+
+Controller includes the set of functions responsible for managing game state transitions, such as `expire`, `win`, etc.. Typically they invoke the model method to register state changes, update one or more renderers in the collection to change visualization, and trigger sound effects. Functions such as `game_start` or `game_load` also switch the whole set of framework callbacks to ensure transitions between active game mode and clickable splash screen (displayed in between games).
+
+### Examples: 
+* when specific N-th challenge is launched, the `launch` function updates the N-th card renderer in progress bar, and sets N-th challenge renderer in game field from nil to the one for unanswered challenge with specific question; 
+* when win happens for N-th challenge and total score is updated from X to Y, function `win` replaces scoreboard renderer from one which draws X to one which draws Y, and alters visualizations of N-th challenge and N-th progress bar card; 
+* when N-th challenge is timed out, function `expire` sets N-th in-field renderer to nil, and updates N-th progress bar card renderer to one displaying red card
 
