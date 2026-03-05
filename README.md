@@ -74,16 +74,16 @@ Whenever game changes state (typically due to changes in challenge statuses), co
 
 Controller runs two loops and one callback:
 
-1) `update` loop queries the model and validates the terminal input to see if state of any challenges or state of the overall game has to be changed. This is typically done by invocation of action-functions such as `expire`, `launch` etc. which are responsible for registering changes (new events) with the model, updating renderers functions to change visualization, and emitting sound effects.
+1) `update` loop queries the model and validates the terminal input to see if state of any challenges or state of the overall game has to be changed. This is typically done by invocation of "action functions" (described below) such as `expire`, `launch` etc. which are responsible for registering changes (new events) with the model, updating renderers functions to change visualization, and emitting sound effects.
 
 2) `draw` loop redraws the game field, invoking all non-nil renderers in the renderers collection (which would draw the score label, cards in progress bar, challenge objects for every active challenge)
 
-### Controller's action-functions
+### Controller's "action functions"
 
-Controller includes the set of functions responsible for managing game state transitions, such as `expire`, `win`, etc.. Typically they invoke the model method to register state changes, update one or more renderers in the collection to change visualization, and trigger sound effects. Functions such as `game_start` or `game_load` also switch the whole set of framework callbacks to ensure transitions between active game mode and clickable splash screen (displayed in between games).
+Controller includes the set of functions responsible for managing game state transitions, such as `expire`, `win`, etc.. Typically they invoke the model method to register state changes, trigger sound effects, and update one or more renderers in the collection to change visualizations. Functions such as `game_start` or `game_load` also switch the whole set of framework callbacks to ensure transitions between active game mode and clickable splash screen (displayed in between games).
 
 ### Examples: 
-* when specific N-th challenge is launched, the `launch` function updates the N-th card renderer in progress bar, and sets N-th challenge renderer in game field from nil to the one for unanswered challenge with specific question; 
-* when win happens for N-th challenge and total score is updated from X to Y, function `win` replaces scoreboard renderer from one which draws X to one which draws Y, and alters visualizations of N-th challenge and N-th progress bar card; 
-* when N-th challenge is timed out, function `expire` sets N-th in-field renderer to nil, and updates N-th progress bar card renderer to one displaying red card
+* when specific N-th challenge is eligible for lauch, the `launch` function registers the launch event via model, updates the N-th progress bar card renderer to the function drawing yellow card, and updates N-th challenge renderer from nil to the function drawing balloon for unanswered challenge with specific question; 
+* when win happens for N-th challenge and total score is updated from X to Y, function `win` replaces scoreboard renderer from one which draws X to one which draws Y, and alters visualizations of N-th in-field challenge and N-th progress bar card; 
+* when N-th challenge is timed out, function `expire` sets N-th challenge renderer to nil, and updates N-th progress bar card renderer to the function displaying red card
 
