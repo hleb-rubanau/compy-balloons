@@ -1,8 +1,8 @@
 require("config")
 require("constants")
 require("views_helpers")
-local Bonus = require("views_baloon")
-local Label = require("views_box")
+local Baloon = require("views_baloon")
+local Box = require("views_box")
 
 local M = {}
 
@@ -11,7 +11,8 @@ local M = {}
 -- (bonus_ox, bonus_oy, label_ox, label_oy)
 local function layout(lw, lh)
   local br = BALLOON_RADIUS
-  return -br, lh / 2, 0, 0
+  -- return -br, lh / 2, 0, 0
+  return lw / 2, -br, 0, 0
 end
 
 local function clamp_x(x, lw)
@@ -20,12 +21,12 @@ local function clamp_x(x, lw)
 end
 
 function M.renderer(question, answer, score, color)
-  local lw, lh = Label.size(question, answer)
+  local lw, lh = Box.size(question, answer)
   local box, boy, lox, loy = layout(lw, lh)
   return function(x, y)
     x = clamp_x(x, lw)
-    Bonus.draw(x + box, y + boy, score, color)
-    Label.draw(x + lox, y + loy, question, answer, color)
+    Baloon.draw(x + box, y + boy, score, color)
+    Box.draw(x + lox, y + loy, question, answer, color)
   end
 end
 
@@ -37,6 +38,7 @@ function M.mistaken(question, answer, score)
   return M.renderer(question, answer, score, COLORS.answer_fail)
 end
 
+-- solved triggers animation on Box, therefore may need timer/framecount!
 function M.solved(question, answer, score)
   return M.renderer(question, answer, score, COLORS.answer_ok)
 end
