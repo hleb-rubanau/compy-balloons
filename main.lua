@@ -2,7 +2,7 @@ require("config")
 require("challenges")
 require("constants")
 require("model")
-require("graphics")
+require("views_game")
 require("debugfunc")
 
 -- stylua: ignore start
