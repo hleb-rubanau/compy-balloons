@@ -2,12 +2,12 @@ require("config")
 require("constants")
 
 require("views_helpers")
-require("views_canvas")   -- background drawers
+require("views_canvas") -- background drawers
 
 local Challenge = require("views_challenge")
-local Results   = require("views_results")
-local Splash    = require("views_splash")        -- see note below
-local Score     = require("views_score")
+local Results = require("views_results")
+local Splash = require("views_splash") -- see note below
+local Score = require("views_score")
 
 score_renderer = Score.renderer
 
@@ -19,12 +19,20 @@ function drawPendingResults()
 end
 
 function successful_result_renderer(bonus)
-  return function(n) Results.draw_successful(n, bonus) end
+  return function(n)
+    Results.draw_successful(n, bonus)
+  end
 end
 
-function draw_pending_result(n)  Results.draw_pending(n)  end
-function draw_waiting_result(n)  Results.draw_waiting(n)  end
-function draw_failed_result(n)   Results.draw_failed(n)   end
+function draw_pending_result(n)
+  Results.draw_pending(n)
+end
+function draw_waiting_result(n)
+  Results.draw_waiting(n)
+end
+function draw_failed_result(n)
+  Results.draw_failed(n)
+end
 
 -- Challenge renderers.
 function unanswered_challenge_renderer(q, score)

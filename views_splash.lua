@@ -4,7 +4,9 @@ local function max_width(lines, font)
   local w = 0
   for _, s in ipairs(lines) do
     local lw = font:getWidth(s)
-    if lw > w then w = lw end
+    if lw > w then
+      w = lw
+    end
   end
   return w
 end
@@ -13,7 +15,7 @@ local function box_geometry(lines, font)
   local fh = font:getHeight()
   local bw = max_width(lines, font)
   local bx = (screen_width - bw) / 2
-  local bh = #lines * fh + (#lines-1) * 0.5 * fh
+  local bh = #lines * fh + (#lines - 1) * 0.5 * fh
   local by = (field_height - bh) / 2
   return bx, by, bw, bh
 end
@@ -27,7 +29,7 @@ function M.show(txt)
     gfx.setColor(COLORS.splash)
     gfx.setFont(f)
     for i, t in ipairs(lines) do
-      gfx.printf(t, bx, by+(i-1)*fh*1.5, bw, center)
+      gfx.printf(t, bx, by + (i - 1) * fh * 1.5, bw, center)
     end
   end
 end

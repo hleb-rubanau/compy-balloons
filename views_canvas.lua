@@ -1,5 +1,5 @@
-require('config')
-require('constants')
+require("config")
+require("constants")
 
 -- Background helpers called by controller directly.
 function drawBackground()
@@ -11,4 +11,3 @@ function drawFieldBackground()
   gfx.setColor(COLORS.bg)
   gfx.rectangle("fill", 0, 0, field_width, field_height)
 end
-

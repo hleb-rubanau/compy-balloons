@@ -21,7 +21,9 @@ function max_string_width(strings, font)
   local max_width = 0
   for _, s in ipairs(strings) do
     local w = font:getWidth(s)
-    if max_width < w then max_width = w end
+    if max_width < w then
+      max_width = w
+    end
   end
   return max_width
 end
@@ -38,7 +40,7 @@ end
 function text_background_geometry(qw, qh, aw, ah)
   local th = math.max(qh, ah)
   local full_height = 2 * th
-  local full_width = qh/2 + qw + th/2 + aw + ah/2
+  local full_width = qh / 2 + qw + th / 2 + aw + ah / 2
   return full_width, full_height
 end
 
@@ -48,7 +50,7 @@ end
 
 function answer_text_position(bh, ah, qh, qw)
   local th = math.max(qh, ah)
-  return qh/2 + qw + th/2, bh / 2 - ah / 2
+  return qh / 2 + qw + th / 2, bh / 2 - ah / 2
 end
 
 function label_text_positions(bh, qh, qw, ah)
@@ -65,8 +67,12 @@ end
 
 function adjust_x(x, leftmost, rightmost)
   local dx = x - rightmost
-  if 0 < dx then x = x - 2 * dx end
+  if 0 < dx then
+    x = x - 2 * dx
+  end
   dx = leftmost - x
-  if 0 < dx then x = x + 2 * dx end
+  if 0 < dx then
+    x = x + 2 * dx
+  end
   return x
 end

@@ -13,7 +13,9 @@ local function draw(score)
 end
 
 function M.renderer(score)
-  return function() draw(score) end
+  return function()
+    draw(score)
+  end
 end
 
 return M

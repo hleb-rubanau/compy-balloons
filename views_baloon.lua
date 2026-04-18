@@ -11,7 +11,7 @@ function M.draw(x, y, bonus, color)
   gfx.setColor(COLORS.score)
   gfx.circle("line", x, y, BALLOON_RADIUS)
   gfx.setFont(fonts.score)
-  gfx.printf(bonus, x - tw/2, y - th/2, tw, "center")
+  gfx.printf(bonus, x - tw / 2, y - th / 2, tw, "center")
 end
 
 return M
