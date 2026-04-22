@@ -1,10 +1,54 @@
 require("config")
 require("constants")
 require("views_helpers")
-local Baloon = require("views_baloon")
-local Box = require("views_box")
 
-local M = {}
+require("views_baloon")
+require("views_box")
+
+
+class = require("util.class")
+ChallengeView = class.create( function(q, a, s)
+  local result = {
+    box = Box(q, a),  
+    baloon = Baloon(s)
+  }
+  local box_w, box_h = result.box:geometry()
+  local bal_w, bal_h = result.baloon:geometry()
+  local baloon_handle = result.baloon:handle()
+
+  result.w = math.max(box_w, bal_w),
+  result.baloon_x = ( result.w - bal_w ) / 2
+  result.box_x = ( result.w - box_w ) / 2 ,
+  
+  result.baloon_y = 0
+  result.box_y = result.baloon_y + baloon_handle
+  result.h = result.box_y + box_h
+
+  return result
+end)
+
+function ChallengeView:geometry()
+  return self.w, self.h
+end
+
+function ChallengeView:draw(score, answer, acolor)
+  gfx.push()
+  gfx.translate(self.baloon_x, self.baloon_y)
+  self.baloon:draw(score, color)
+  gfx.pop()
+
+  gfx.push()
+  gfx.translate(self.box_x, self.box_y)
+  self.box:draw(score, color)
+  gfx.pop()
+end
+
+--- we need following draw modes:
+-- 1. question only (unanswered)
+-- 2. q+a (animation)
+-- 3. baloon only (answered past animation)
+
+
 
 -- The single seam for layout change (bonus left vs top).
 -- Returns offsets relative to challenge origin (x, y):

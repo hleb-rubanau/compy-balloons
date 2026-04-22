@@ -44,9 +44,6 @@ function text_background_geometry(qw, qh, aw, ah)
   return full_width, full_height
 end
 
-function question_text_position(bh, qh)
-  return qh / 2, bh / 2 - qh / 2
-end
 
 function answer_text_position(bh, ah, qh, qw)
   local th = math.max(qh, ah)
