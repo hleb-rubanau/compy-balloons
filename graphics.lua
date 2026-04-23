@@ -354,13 +354,14 @@ function widget_animation(...)
 
   local function draw(phase)
     -- Clamp phase to [0, 1]
-    phase = math.max(0, math.min(1, phase or 0))
+    phase = math.max(0, math.min(1, phase or 0))  -- clamps: 1.7 -> 1.0
 
     -- Map phase -> 1-based frame index
     local n = math.floor(phase * (N - 1) + 0.5) + 1
     n = math.max(1, math.min(N, n))
 
-    local frame = frames[n]
+    return frames[n].draw()
+    -- local frame = frames[n]
 
     -- Center the frame within the bounding box if it's smaller
     local fw = frame.geometry[1]
@@ -383,6 +384,19 @@ function widget_animation(...)
     length   = N,
     draw     = draw,
   }
+end
+
+function widget_animation_loop(...)
+  local single_animation = widget_animation(...)
+  local result = { }
+  for k,v in ipairs(single_animation) do
+      result[k] = v
+  end
+  result.draw = function(phase,...) 
+    phase = phase % 1  -- wraps: 1.7 -> 0.7, 3.0 -> 0.0
+    single_animation.draw(phase, ...)
+  end 
+  return result
 end
 
 -------------------------------------------------------------------------------
