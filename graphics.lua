@@ -156,11 +156,11 @@ function widget_textbox(config, ...)
   local box = widget_box(label_w, label_h, config)
 
   local function draw()
+    gfx.push("all")
     -- Draw the box background/border
     box.draw()
 
     -- Now draw text(s) inside, offset by padding
-    gfx.push()
     gfx.translate(unpack(box.content_pos))
 
     if direction == "horizontal" then
@@ -206,7 +206,6 @@ function widget_textbox(config, ...)
     end
 
     gfx.pop()
-    gfx.setColor(1, 1, 1, 1)
   end
 
   return {
@@ -314,7 +313,7 @@ function widget_baloon(opts)
       local tw = font:getWidth(text)
       local th = font:getHeight()
       gfx.setColor(1,1,1,1)
-      gfx.circle("fill", cx, cy, tw*0.75, th*0.75)
+      gfx.ellipse("fill", cx, cy, tw*0.75, th*0.75)
       gfx.setColor(text_color)
       gfx.print(text, cx - tw / 2, cy - th / 2)
     end
@@ -324,6 +323,64 @@ function widget_baloon(opts)
 
   return {
     geometry = {total_w, total_h},
+    draw     = draw,
+  }
+end
+
+
+-------------------------------------------------------------------------------
+-- widget_animation
+-- Takes N pre-built widget tables (each with .geometry and .draw).
+-- Returns a widget-like table with:
+--   .geometry    = {w, h}  -- bounding box of all frames
+--   .length      = N       -- number of frames (animation "steps")
+--   .draw(phase) = fn      -- phase in [0..1], selects and draws the right frame
+--
+-- Frame selection: n = clamp(round(phase * (N-1)) + 1, 1, N)
+-------------------------------------------------------------------------------
+function widget_animation(...)
+  local frames = {...}
+  local N = #frames
+  assert(N >= 1, "widget_animation: at least one frame required")
+
+  -- Bounding geometry: max width and max height across all frames
+  local max_w, max_h = 0, 0
+  for _, frame in ipairs(frames) do
+    local fw = frame.geometry[1]
+    local fh = frame.geometry[2]
+    if fw > max_w then max_w = fw end
+    if fh > max_h then max_h = fh end
+  end
+
+  local function draw(phase)
+    -- Clamp phase to [0, 1]
+    phase = math.max(0, math.min(1, phase or 0))
+
+    -- Map phase -> 1-based frame index
+    local n = math.floor(phase * (N - 1) + 0.5) + 1
+    n = math.max(1, math.min(N, n))
+
+    local frame = frames[n]
+
+    -- Center the frame within the bounding box if it's smaller
+    local fw = frame.geometry[1]
+    local fh = frame.geometry[2]
+    local ox = math.floor((max_w - fw) / 2)
+    local oy = math.floor((max_h - fh) / 2)
+
+    if ox ~= 0 or oy ~= 0 then
+      gfx.push()
+      gfx.translate(ox, oy)
+      frame.draw()
+      gfx.pop()
+    else
+      frame.draw()
+    end
+  end
+
+  return {
+    geometry = {max_w, max_h},
+    length   = N,
     draw     = draw,
   }
 end
@@ -379,6 +436,14 @@ function widget_challenge(opts)
   local tw, th = textbox_widget_qa.geometry[1], textbox_widget_qa.geometry[2]
   local overlap = 5
 
+  -- TODO: in fact I want three variants of display (maybe more)
+  --       initial: baloon + question
+  --       interim: baloon + answer
+  --       final: baloon only
+  -- and maybe (maybe-maybe), there will be some animation across widgets between 2 and 3
+  -- and we intentinally use them in a single widget because
+  --    a) baloon is the same
+  --    b) external geometry is the same (hitbox of biggest widget)
   local frames = {
     textbox_widget_q,
     textbox_widget_qa,
@@ -395,14 +460,14 @@ function widget_challenge(opts)
   local textbox_x = (total_w - tw) / 2
   local textbox_y = (bh - overlap)
 
-  local function draw(phase)
+  local function draw(score, phase)
     if phase=~nil then
       phase = 0
     end
     -- Draw balloon
     gfx.push("all")
-    gfx.translate(balloon_x, 0)
-    balloon_widget.draw()
+    gfx.translate(balloon_x, baloon_y)
+    balloon_widget.draw(score)
     gfx.pop()
 
     -- Draw textbox below balloon
