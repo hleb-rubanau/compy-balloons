@@ -4,7 +4,7 @@ require("constants")
 require("views_helpers")
 require("views_canvas") -- background drawers
 
-local Challenge = require("views_challenge")
+local ChallengeView = require("views_challenge")
 local Results = require("views_results")
 local Splash = require("views_splash") -- see note below
 local Score = require("views_score")
@@ -36,15 +36,11 @@ end
 
 -- Challenge renderers.
 function unanswered_challenge_renderer(q, score)
-  return Challenge.unanswered(q, score)
-end
-
-function mistaken_challenge_renderer(q, answer, score)
-  return Challenge.mistaken(q, answer, score)
+  return ChallengeView:unanswered_renderer(q, score)
 end
 
 function solved_challenge_renderer(q, answer, score)
-  return Challenge.solved(q, answer, score)
+  return ChallengeView:solved_rederer(q, score)
 end
 
 -- Splash screens.

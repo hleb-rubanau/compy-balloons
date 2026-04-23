@@ -4,29 +4,35 @@ require("constants")
 
 class = require("util.class")
 
-Box = class.create( function(question, answer)
-  local params = {
+BoxView = class.create( function(question, answer)
+  return {
     q = question,
-    a = answer,
-    qw = fonts.question:getWidth(question),
-    qh = fonts.question:getHeight(),
-    aw = fonts.answer:getWidth(answer),
-    ah = fonts.answer:getHeight()
+    a = answer
   }
-  params.th = math.max(params.qh, params.ah)
-  params.p = params.th / 2 
-  params.h = 2 * params.th
-  params.w = 3 * params.p + params.qw + params.aw 
-  return params
 end)
 
-function Box:geometry()
+function BoxView:calculate_geometry()
+  self.qw = fonts.question:getWidth(self.question)
+  self.qh = fonts.question:getHeight()
+  self.aw = fonts.answer:getWidth(self.answer)
+  self.ah = fonts.answer:getHeight()
+  
+  self.th = math.max(self.qh, self.ah)
+  self.p = self.th / 2 
+  self.h = 2 * self.th
+  self.w = 3 * self.p + self.qw + self.aw 
+end
+
+function BoxView:geometry()
+  if (! self.w ) then
+    self:calculate_geometry()
+  end
   return self.w, self.h
 end
 
-function Box:draw_canvas(acolor)
+function BoxView:draw_canvas(with_answer)
   local text_w = self.qw
-  if acolor then
+  if with_answer then
     text_w = self.qw + self.p + self.aw
   end
   local box_w = text_w + 2 * self.p 
@@ -39,7 +45,7 @@ function Box:draw_canvas(acolor)
   gfx.pop()
 end
 
-function Box:draw_question()
+function BoxView:draw_question()
   local text_x = self.p
   local text_y = (self.h - self.qh) / 2
   gfx.push()
@@ -49,21 +55,21 @@ function Box:draw_question()
   gfx.pop()
 end
 
-function Box:draw_answer(acolor)
+function BoxView:draw_answer()
   local text_x = self.p + self.qw + self.p
   local text_y = (self.h - self.ah) / 2
   gfx.push()
-  gfx.setColor(acolor)
+  gfx.setColor(COLORS.answer_ok)
   gfx.setFont(fonts.answer)
   gfx.printf(self.q, text_x, text_y, self.aw, self.ah)
   gfx.pop()
 end
 
-function Box:draw(acolor)
+function BoxView:draw(with_answer)
   gfx.push()
-  self:draw_canvas(acolor)
+  self:draw_canvas(with_answer)
   self:draw_question()
-  if acolor then
+  if with_answer then
     self:draw_answer()
   end
   gfx.pop()

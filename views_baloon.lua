@@ -3,7 +3,7 @@ require("constants")
 
 class = require("util.class")
 
-Baloon = class.create( function(size)
+BaloonView = class.create( function(size)
   size = size or 1
   -- 1, 2, 3 -> 1, 1.5, 2.0
   local scale = 1 + (size - 1)/2 ,
@@ -15,15 +15,15 @@ Baloon = class.create( function(size)
   }
 end)
 
-function Baloon:geometry()
+function BaloonView:geometry()
   return self.radius, self.radius
 end
 
-function Baloon:handle()
+function BaloonView:handle()
   return (self.radius * 2) + 5
 end
 
-function Baloon:draw(bonus, color)
+function BaloonView:draw(bonus, color)
   local tw = fonts.score:getWidth(tostring(bonus))
   local r = self.radius
   local text_x = -0.5 * tw
