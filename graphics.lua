@@ -446,24 +446,15 @@ function widget_challenge(opts)
   local textbox_widget_q  = widget_textbox(textbox_config, question)
   local noop_widget = { geometry: {0,0}, draw: function() end }
 
-  local bw, bh = balloon_widget.geometry[1], balloon_widget.geometry[2]
-  local tw, th = textbox_widget_qa.geometry[1], textbox_widget_qa.geometry[2]
+
+  local textbox_widget = widget_animation(textbox_widget_q,
+                                          textbox_widget_qa,
+                                          noop_widget)
+  
+  local bw, bh = unpack( balloon_widget.geometry )
+  local tw, th = unpack( textbox_widget.geometry )
   local overlap = 5
-
-  -- TODO: in fact I want three variants of display (maybe more)
-  --       initial: baloon + question
-  --       interim: baloon + answer
-  --       final: baloon only
-  -- and maybe (maybe-maybe), there will be some animation across widgets between 2 and 3
-  -- and we intentinally use them in a single widget because
-  --    a) baloon is the same
-  --    b) external geometry is the same (hitbox of biggest widget)
-  local frames = {
-    textbox_widget_q,
-    textbox_widget_qa,
-    noop_widget
-  }
-
+  
   -- Layout: balloon centered above textbox
   local total_w = math.max(bw, tw)
   local total_h = bh + th - overlap
@@ -487,7 +478,7 @@ function widget_challenge(opts)
     -- Draw textbox below balloon
     gfx.push("all")
     gfx.translate(textbox_x, textbox_y)
-    textbox_widget.draw()
+    textbox_widget.draw(phase)
     gfx.pop()
   end
 
