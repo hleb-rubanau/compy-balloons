@@ -79,7 +79,7 @@ function widget_box(label_w, label_h, opts)
   return {
     geometry = {total_w, total_h},
     draw     = draw,
-    content_pos = { pad, pad }
+    pos = { label = { pad, pad } }
   }
 end
 
