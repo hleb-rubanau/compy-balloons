@@ -79,10 +79,11 @@ end
 -- Returns { geometry={w,h}, draw=fn, inner_pos={x,y} }
 -------------------------------------------------------------------------------
 function widget_box(inner_w, inner_h, style)
-  local pad = style.padding or math.max(inner_h * 0.35, inner_h * 0.25)
+  local pad = style.padding or (math.min(inner_w, inner_h)* 0.25)
   local w   = inner_w + pad * 2
   local h   = inner_h + pad * 2
-  local r   = style.corner_radius or 6
+  local r   = style.corner_radius or 0
+  local b   = style.border_width or 2
 
   return {
     geometry  = {w, h},
@@ -92,7 +93,7 @@ function widget_box(inner_w, inner_h, style)
       gfx.setColor(style.bg_color)
       gfx.rectangle("fill", 0, 0, w, h, r)
       gfx.setColor(style.border_color)
-      gfx.setLineWidth(style.border_width or 2)
+      gfx.setLineWidth(b)
       gfx.rectangle("line", 0, 0, w, h, r)
       gfx.pop()
     end,
@@ -109,9 +110,9 @@ end
 -- Returns { geometry={w,h}, draw=fn }
 -------------------------------------------------------------------------------
 function widget_answered_box(question_label, answer_label, style)
-  local gap  = style.gap or 12
   local qw, qh = unpack(question_label.geometry)
   local aw, ah = unpack(answer_label.geometry)
+  local gap  = style.gap or 12
 
   local inner_w = qw + gap + aw
   local inner_h = math.max(qh, ah)
@@ -254,6 +255,13 @@ function widget_noop()
   return { geometry={0,0}, draw=function() end }
 end
 
+function widget_invisible(orig)
+  return {
+    geometry = orig.geometry,
+    draw = function() end 
+  }
+end
+
 
 -------------------------------------------------------------------------------
 -- widget_challenge
@@ -272,13 +280,14 @@ function widget_challenge(question, answer, balloon_style, label_styles, box_sty
   }
 
   local q_label  = widget_text_label(question, label_styles.question)
-  local qa_box   = widget_answered_box(q_label,
-                     widget_text_label(answer, label_styles.answer),
-                     box_style)
-  -- question-only box reuses same q_label geometry for stable sizing
-  local q_box    = widget_answered_box(q_label, widget_noop(), box_style)
+  local a_label  = widget_text_label(answer, label_styles.answer) 
+  
+  local qa_box   = widget_answered_box(q_label, a_label, box_style)
+  local q_box    = widget_answered_box(q_label, widget_invisible(a_label), box_style)
 
-  local textbox_anim = widget_animation(q_box, qa_box, widget_noop())
+  local textbox_anim = widget_animation(q_box, 
+                                        qa_box, 
+                                        widget_invisible(qa_box))
 
   local ref_balloon = widget_balloon(balloon_style)
   local bw, bh = unpack(ref_balloon.geometry)
