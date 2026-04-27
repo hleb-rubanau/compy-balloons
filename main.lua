@@ -6,6 +6,9 @@ require("views_game")
 require("debugfunc")
 
 -- stylua: ignore start
+
+views = { }
+
 positions = { }
 render = {
   score = nil,
@@ -18,6 +21,12 @@ callbacks = {
   update = nil,
   draw = nil
 }
+
+function init_views()
+  for i, c in ipairs(CHALLENGES) do
+    views[i] = widget_challenge(c.question, c.answer)
+  end
+end
 -- stylua: ignore end
 
 terminal = user_input()
@@ -37,6 +46,7 @@ function callback(name)
 end
 
 function game_load()
+  init_views() 
   callbacks.click = game_start
   callbacks.update = nil
   callbacks.draw = splash(WELCOME_MESSAGE)
@@ -54,8 +64,8 @@ function game_over()
 end
 
 function game_start()
-  reset_state()
-  reset_render()
+  reset_state() -- changes runtime
+  reset_render()  
   ui_update_score()
   callbacks.click = nil
   callbacks.update = update_game

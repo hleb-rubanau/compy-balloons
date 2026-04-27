@@ -310,3 +310,4 @@ function widget_challenge(question, answer, balloon_style, label_styles, box_sty
     end,
   }
 end
+
