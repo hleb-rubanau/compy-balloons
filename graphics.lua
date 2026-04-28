@@ -146,8 +146,9 @@ end
 -- Returns { geometry={w,h}, draw=fn }
 -------------------------------------------------------------------------------
 function widget_balloon(style)
-  local scales = {[1]=1.0, [2]=1.5, [3]=2.0}
-  local scale  = scales[style.size or 1] or 1.0
+  --local scales = {[1]=1.0, [2]=1.5, [3]=2.0}
+  --local scale  = scales[style.size or 1] or 1.0
+  local scale = 1 + (size - 1)/2  
 
   local rx, ry = 80*scale, 80*scale
   local nubW   = 10*scale

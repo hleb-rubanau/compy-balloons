@@ -23,6 +23,10 @@ callbacks = {
 }
 
 function init_views()
+  views.splash = widget_splash()
+  views.score  = widget_score()
+  views.challenges = { }
+  views.results = { }
   for i, c in ipairs(CHALLENGES) do
     views[i] = widget_challenge(c.question, c.answer)
   end

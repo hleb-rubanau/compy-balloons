@@ -4,6 +4,11 @@ require("config")
 time = 0
 queue = { }
 
+-- The only varying states are 'events' and 'scores'
+-- in fact, even scores could be calculated from events
+-- events are sources of truth because most game mechanics 
+-- is determined by the time difference between various events
+-- but also we have layout function -- e.g. where the X coordinate sits
 events = {
   starts = { },
   wins = { },
