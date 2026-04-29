@@ -263,14 +263,18 @@ function widget_invisible(orig)
   }
 end
 
+function draw_at(x, y, fn, ...)
+  gfx.push()
+  gfx.translate(x,y)
+  fn(...)
+  gfx.pop()
+end
+
 function widget_with_dynamic_position(orig)
   return {
     geometry = orig.geometry,
     draw = function(x, y, ...)
-      gfx.push()
-      gfx.translate(x,y)
-      orig.draw(...)
-      gfx.pop()
+      draw_at(x, y, orig.draw, ...)
     end
   }
 end
@@ -279,10 +283,7 @@ function widget_with_static_position(x, y, orig)
   return {
     geometry = orig.geometry,
     draw = function(...)
-      gfx.push()
-      gfx.translate(x,y)
-      orig.draw(...)
-      gfx.pop()
+      draw_at(x, y, orig.draw, ...)
     end
   }
 end

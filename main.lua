@@ -23,6 +23,44 @@ require("debugfunc")
 --        'challenges' (queue-shaped, references real challenges)
 -------------------------------------------------
 
+-- my original implementation was too canonical in separation of model and views
+-- we do not have to do it that strict. At least there are eements of the visuals which belong to model
+-- model (and this info do we have!):
+--    how many launched/solved/expired
+--    which ones in which order
+-- views:
+--    N slots
+--    could be nil before launch or after expire
+--    slot is initialized when thing is launched (BECAUSE coordinate X may not be known yet, but its ONLY for varying speeds -- and what if instead we ignore a problem of varying speeds, just drawing them on top of each other?)
+--    also it does not matter for when we solve the thing -- our concern was only for active stuff overlapping. If we draw in strict order, its not a problem
+--    then... slot is initialized whenever we want.
+
+
+----------------------------------------------------------
+-- model: as currently
+-- views: new file, utilizes graphics but also has specific instances
+-- controller -- invokes view with parameters (results)a
+-- now important aspect: state recalculation on every tick is useless, because state changes more rarely *except* animation phase and coordinate
+
+-- so controller must blend the 'game state' with 'coordinate'
+--    and some info is just fixed e.g. (q&a, x after launch, that shit)
+-- the important lifecycle events:
+--    launch: 
+--      changes model
+--    draw:
+--      results
+--  current model has mostly results recorded. Why? as they are raw data
+--    but we also need precalculated, to avoid 
+--
+-- so, state structure is....
+--      
+
+-----------------------------------------------
+-- IMMUTABLE DATA
+--  views
+
+
+
 -- stylua: ignore start
 
 views = { }

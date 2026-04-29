@@ -213,6 +213,7 @@ end
 
 --- scope iterators ---
 
+-- why not "for i in 1, #queue do" ?
 function queued_challenges()
   local i = 0
   return function()
