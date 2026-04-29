@@ -263,6 +263,42 @@ function widget_invisible(orig)
   }
 end
 
+function widget_with_dynamic_position(orig)
+  return {
+    geometry = orig.geometry,
+    draw = function(x, y, ...)
+      gfx.push()
+      gfx.translate(x,y)
+      orig.draw(...)
+      gfx.pop()
+    end
+  }
+end
+
+function widget_with_static_position(x, y, orig)
+  return {
+    geometry = orig.geometry,
+    draw = function(...)
+      gfx.push()
+      gfx.translate(x,y)
+      orig.draw(...)
+      gfx.pop()
+    end
+  }
+end
+
+function widget_stack(...)
+  local widgets = { ... }
+  return {
+    geometry = widgets[1].geometry,
+    draw = function(...)
+      for i, w in ipairs(widgets) do
+        w.draw(...)
+      end
+    end
+  }
+end
+
 
 -------------------------------------------------------------------------------
 -- widget_challenge

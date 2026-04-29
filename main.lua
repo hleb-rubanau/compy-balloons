@@ -5,6 +5,24 @@ require("model")
 require("views_game")
 require("debugfunc")
 
+-------------------------------------------------
+-- the game view must build layout, declaratively?
+-- but renderer still will travel across all queue items
+-- so could they be a params?
+-- 'draw' is invoked at every step. We do not have to recalculate everything on every draw tick
+-- we need robust renderers to be there
+-- something like:
+--    'splash', ...
+--    'game', ...<data for all widgets>? yes, maybe>
+--      which in fact means that on 'update' the renderer is switched somehow
+--      at least, its mode and payload
+--    what exactly is switched on update?
+--      we need some data structure, that says
+--        'results'
+--        'game'
+--        'challenges' (queue-shaped, references real challenges)
+-------------------------------------------------
+
 -- stylua: ignore start
 
 views = { }
