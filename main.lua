@@ -97,6 +97,8 @@ require("debugfunc")
 -- stylua: ignore start
 
 views = { }
+slots = { }
+
 
 positions = { }
 render = {
@@ -119,6 +121,10 @@ function init_views()
   for i, c in ipairs(CHALLENGES) do
     views[i] = widget_challenge(c.question, c.answer)
   end
+end
+
+function init_slots() 
+
 end
 -- stylua: ignore end
 
