@@ -57,8 +57,41 @@ require("debugfunc")
 
 -----------------------------------------------
 -- IMMUTABLE DATA
---  views
-
+--  challenges: config
+--  solvers:  matches answer with 
+--  renderers: initialized from config (solely to avoid GC abuse)
+--  so, instead we build the following:
+--    CHALLENGES:
+--      idx
+--      config (copy of config entry) -- important to calc speed and bonus
+--        only config/speed/bonus
+--      solver
+--      renderer
+-- MUTABLE DATA:
+--  model:
+--    slot # => 
+--        challenge # 
+--          (references solver, renderer, speed params)
+--        lifecycle 
+--          launched 
+--          solved
+--          expired
+--        display
+--          coord x
+--          current y (changes every tick)
+--          current phase ( now - solved / animation length)
+--        state: 'pending/launched/solved/expired/vanished' (vanish happens after solved)
+--        bonus:
+--          pending
+--          earned
+--    game:
+--      scores: 
+--        earned
+--        possible
+--      challenges: 
+--        solved
+--        pending
+--        total
 
 
 -- stylua: ignore start

@@ -300,6 +300,22 @@ function widget_stack(...)
   }
 end
 
+function widget_choice(maptable, default_key)
+  if not default_key then
+    default_key = 'default'
+  end
+  return {
+    geometry = maptable[default_key].geometry,
+    draw = function(k, ...)
+      if maptable[k]~=nil and default_key then
+        maptable[default_key].draw(...)
+      else
+        maptable[k].draw(...)
+      end
+    end
+  }
+end
+
 
 -------------------------------------------------------------------------------
 -- widget_challenge
