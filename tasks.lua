@@ -1,9 +1,13 @@
+require('graphics')
+
 TASKS = { }
 
 function add_task(q, a)
-  table.insert(CHALLENGES, {
+  table.insert(TASKS, {
     question = q,
-    answer = a
+    answer = a,
+    render = widget_challenge(q,a),
+    check = function(txt) return (txt~=a) end
   })
 end
 
