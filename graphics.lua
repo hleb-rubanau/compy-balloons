@@ -35,6 +35,10 @@ STYLE = {
     line_color = {0.10, 0.25, 0.65, 1},
     size       = 1,
   },
+  splash = {
+    bg_color = Color[Color.blue],
+    font_color = Color[Color.blue]
+  }
 }
 
 function shallow_merge(a, b)
@@ -68,6 +72,30 @@ function widget_text_label(text, style)
       gfx.print(text, padding, padding)
       gfx.pop()
     end,
+  }
+end
+
+function widget_text_multiline(text, ...)
+  local styles = { ... }
+  local widgets = { }
+  local max_w, max_h = 0, 0
+  for i, t in ipairs(text.split("\n")) do
+    widgets[i] = widget_text_label(t, (styles[i] or styles[1]))
+    local w, h  = unpack(widgets[i].geometry)
+    max_w = math.max(max_w, w)
+    max_h = math.max(max_h, h)
+  end
+
+  return {
+    geometry = { max_w, max_h },
+    draw = function() 
+      local this_y = 0
+      for i, w in pairs(widgets) do
+        local this_x = (max_w - w.geometry[1])/2
+        draw_at( this_x, this_y, w.draw ) 
+        this_y = this_y + w.geometry[2]
+      end
+    end
   }
 end
 
@@ -365,3 +393,23 @@ function widget_challenge(question, answer, balloon_style, label_styles, box_sty
   }
 end
 
+function draw_backrgound(color, x, y, w, h)
+  gfx.push("all")
+  gfx.setColor(color)
+  gfx.rectangle("fill", x, y, w, h) 
+  gfx.pop()
+end
+
+function widgetSplash(txt)
+  local sw, sh = gfx.getDimensions()
+  local multiline_txt = widget_text_multiline(txt, STYLES.splash) 
+  local x = (sw - multiline_txt.geometry[1])/2 
+  local y = (sh - multiline_txt.geometry[2])/2
+  return {
+    geometry = { sw, sh },
+    draw = function ()
+      draw_backrgound(Colors[Color.bg], 0, 0, sw, sh)
+      draw_at(x, y, multiline_txt.draw)
+    end
+  }
+end
