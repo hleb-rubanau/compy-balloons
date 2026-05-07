@@ -1,5 +1,6 @@
 require("config")
 require("constants")
+require("helpers")
 
 gfx = love.graphics
 
@@ -41,12 +42,6 @@ STYLE = {
   }
 }
 
-function shallow_merge(a, b)
-  local out = {}
-  for k, v in pairs(a) do out[k] = v end
-  if b then for k, v in pairs(b) do out[k] = v end end
-  return out
-end
 
 
 -------------------------------------------------------------------------------

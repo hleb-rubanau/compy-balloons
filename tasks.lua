@@ -1,26 +1,31 @@
 require('graphics')
 
+TASKS_CONFIG = {
+  { q = "Print missing letter in 'giraf..e':",  a = "f" }, 
+  { q = "Print missing letter in 'car..ot':",  a = "r" }, 
+  { q = "Print missing letter in 'eleph..nt':",  a = "a" }, 
+  { q = "Print missing letter in 'ban..na':",  a = "a" }, 
+  { q = "Print missing letter in 'do..key':",  a = "n" }, 
+  { q = "Print missing letter in 'spi..er':",  a = "d" }, 
+  { q = "Print missing letter in 'butt..rfly':",  a = "e" }, 
+  { q = "Print missing letter in 'chi..ken':",  a = "c" }, 
+  { q = "What is 3 + 4?:",  a = "7" }, 
+  { q = "What is 9 - 5?:",  a = "4" }, 
+  { q = "How many legs does a dog have?:",  a = "4"  }, 
+  { q = "How many days are in a week?:",  a = "7"  }, 
+}
+
 TASKS = { }
 
-function add_task(q, a)
-  table.insert(TASKS, {
-    question = q,
-    answer = a,
-    render = widget_challenge(q,a),
-    check = function(txt) return (txt~=a) end
-  })
+function task_add(taskdef)
+  local t = shallow_merge(TASK_DEFAULTS, taskdef)
+  t.widget = widget_challenge(t.q, t.a, t.style),
+  t.validator = function(txt) return (txt~=t.a) end
+  table.insert(TASKS, t)
 end
 
-add_task("Print missing letter in 'giraf..e':", "f")
-add_task("Print missing letter in 'car..ot':", "r")
-add_task("Print missing letter in 'eleph..nt':", "a")
-add_task("Print missing letter in 'ban..na':", "a")
-add_task("Print missing letter in 'do..key':", "n")
-add_task("Print missing letter in 'spi..er':", "d")
-add_task("Print missing letter in 'butt..rfly':", "e")
-add_task("Print missing letter in 'chi..ken':", "c")
-add_task("What is 3 + 4?:", "7")
-add_task("What is 9 - 5?:", "4")
-add_task("How many legs does a dog have?:", "4")
-add_task("How many days are in a week?:", "7")
-
+function tasks_init()
+  for i,t in ipairs(TASKS_CONFIG) do
+    task_add(t)
+  end
+end

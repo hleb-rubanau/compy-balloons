@@ -52,3 +52,10 @@ FONTS = {
   results_score = 24,
   hint = 16
 }
+
+TASK_DEFAULTS = {
+  score = 10,
+  size = 1,
+  style = "blue",
+  speed = 1
+}
