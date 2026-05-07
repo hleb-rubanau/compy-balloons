@@ -20,3 +20,9 @@ function shallow_merge(a, b)
   if b then for k, v in pairs(b) do out[k] = v end end
   return out
 end
+
+function partial_reset(target, src)
+  for k, v in pairs(src) do
+    target[k]=v
+  end
+end
