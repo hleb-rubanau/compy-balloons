@@ -12,6 +12,12 @@ WELCOME_MESSAGE = "Click to start"
 RESULTS_MESSAGE = "Your score: %s (%s/%s)\nClick to restart"
 STARTING_PROMPT = "Type and press <Enter>"
 GAME_PROMPT = "Your answer: <%s>"
+STATS_TEMPLATE = "Solved: %s/%s | Score: %s | Time: %ds"
+STATUS_TEMPLATE = "Solved: %s/%s | Pending: %s | Score: %s | Time: %ds"
+
+SPLASH_HINT_BASE = "click or type 'start'"
+SPLASH_HINT_START = "To start: "..SPLASH_HINT_BASE
+SPLASH_HINT_RESTART = "To restart: "..SPLASH_HINT_BASE
 
 SCREEN_VPAD = 0.1
 BALLOON_RADIUS = 24

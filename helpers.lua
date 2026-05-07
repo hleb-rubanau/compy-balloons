@@ -1,3 +1,5 @@
+fmt = string.format
+
 function noop() 
   -- literally does nothing
 end

@@ -408,3 +408,10 @@ function widgetSplash(txt)
     end
   }
 end
+
+function widget_splash_game_over()
+  local opening_message = "Game Over!"
+  local stats_template = "Solved: %s/%s | Score: %s | Time: %ss"
+  local stats_stub = string.format(stats_template, 99, 99, 100, 100)
+  local restart_msg = 
+end
