@@ -49,13 +49,11 @@ function game_event_handler(map)
 end
 
 function game_state_init()
- 
+  challenges_init() 
 end
 
-function game_init()
 
-  game_state_init()
-
+function game_handlers_init()
   local input_handler = game_event_handler(on_input)
   local terminal = terminal_init(input_handler) 
   game_interfaces.terminal = terminal
@@ -64,10 +62,13 @@ function game_init()
     state_updater(...)
     terminal.read()
   end
-
   love.update = game_updater
   love.draw = game_event_handler(on_draw)
   compy.singleclick = game_event_handler(on_click)
-
 end
 
+function game_init()
+  game_state_init()
+  challenges_init(game.total_count)
+  game_handlers_init()
+end
