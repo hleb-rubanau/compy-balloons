@@ -1,24 +1,24 @@
 require("config")
 require("challenges")
-require('graphics')
+require("graphics")
 require("stats")
 
 game = {
-  state = 'loaded',
+  state = "loaded",
   total_count = MAX_SLOTS,
   msg_user_hint = SPLASH_HINT_START,
   msg_stats_final = nil,
   msg_stats_current = nil,
 }
 
-ui = { 
+ui = {
   terminal = terminal_init(),
   field = widget_field(),
   splash_welcome = widget_splash_welcome(),
   splash_restart = widget_splash_gameover(),
   challenges = {
-    draw = challenges_draw
-  }
+    draw = challenges_draw,
+  },
 }
 
 function game_start()
@@ -44,7 +44,7 @@ function game_over()
 end
 
 function game_status_message()
-  local prompt = game.last_input 
+  local prompt = game.last_input
 end
 
 function ui_status_prompt()
@@ -55,7 +55,7 @@ end
 function ui_refresh_status()
   local hint = game.msg_user_hint or "    "
   local status = game.msg_stats_final or game.msg_stats_current
-  local statusline = hint  .."   ".. status 
+  local statusline = hint .. "   " .. status
   ui.terminal.write(statusline)
 end
 
@@ -68,8 +68,8 @@ function game_status_update()
 end
 
 function game_update(dt)
-  local t_old = stats.time 
-  local t_new = stats_add('time', dt)
+  local t_old = stats.time
+  local t_new = stats_add("time", dt)
   local new_second = math.floor(t_old) < math.floor(t_new)
 
   stats.changes = 0
@@ -88,35 +88,33 @@ end
 
 function game_draw_field()
   ui.field.draw()
-  challenges_draw() 
+  challenges_draw()
 end
 
 splash_draw_welcome = widget_splash(WELCOME_MESSAGE).draw
 splash_draw_restart = function()
-  ui.splash_restart.draw( game.msg_stats_final )
+  ui.splash_restart.draw(game.msg_stats_final)
 end
 
-
 on_click = action_map({
-  'loaded' = game_start ,
-  'finished' = game_start
+  loaded = game_start,
+  finished = game_start,
 })
 
 on_input = action_map({
-  'active' = game_validate_input ,
-  'loaded' = on_text_match('start', game_start),
-  'finished' = on_text_match('start', game_start)
+  active = game_validate_input,
+  loaded = on_text_match("start", game_start),
+  finished = on_text_match("start", game_start),
 })
 
-
 on_draw = action_map({
-  'loaded' = ui.splash_welcome.draw,
-  'active'  = game_draw_field,
-  'finished' = splash_draw_restart
+  loaded = ui.splash_welcome.draw,
+  active = game_draw_field,
+  finished = splash_draw_restart,
 })
 
 on_tick = action_map({
-  'active' = game_update
+  active = game_update,
 })
 
 function game_event_handler(map)
@@ -126,12 +124,12 @@ function game_event_handler(map)
 end
 
 function game_init()
-  challenges_init() 
+  challenges_init()
 
   local state_updater = game_event_handler(on_tick)
   local input_handler = game_event_handler(on_input)
   love.update = function(...)
-    terminal_read(input_handler) 
+    terminal_read(input_handler)
     state_updater(...)
   end
   compy.singleclick = game_event_handler(on_click)
