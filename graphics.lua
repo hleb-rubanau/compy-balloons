@@ -29,7 +29,7 @@ STYLE = {
   },
   splash_hint = {
     font = FONTS.h5,
-    color.COLORS.white,
+    color = COLORS.white,
   },
   card = {
     bg_color = COLORS.obsidian, -- 0.90
