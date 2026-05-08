@@ -16,3 +16,10 @@ end
 function terminal_write(msg)
   input_text(msg, nil)
 end
+
+function terminal_init()
+  return { 
+    write = terminal_write,
+    read = terminal_read
+  }
+end

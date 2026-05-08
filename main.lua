@@ -2,29 +2,35 @@ require("config")
 require("constants")
 require("challenges")
 require('graphics')
-
+require("stats")
 
 game = {
   state = 'loaded',
-  welcome_message = WELCOME_MESSAGE,
-  status_message = "",
+  current_status_msg = "",
+  final_status_msg = "",
+  last_input = "",
   total_count = MAX_SLOTS,
   prompt = SPLASH_HINT_START
 }
 
-ui = {
+ui = { 
   terminal = terminal_init(),
-  splash = widget_splash_gameover(),
-  initial_splash = widget_splash_welcome()
+  field = widget_field(),
+  splash_welcome = widget_splash_welcome(),
+  splash_restart = widget_splash_gameover(),
+  challenges = {
+    draw = challenges_draw
+  }
 }
 
 function game_start()
   local n = game.total_count
   stats_reset(n)
   challenges_reset(n)
-  game.status_msg = stats_status_message()
+  game.current_status_msg = stats_status_message()
   game.state = "started"
-  ui.terminal.write(game.status_msg)
+  -- should be part of draw?
+  ui.terminal.write(game.current_status_msg)
 end
 
 function game_over()
@@ -32,8 +38,14 @@ function game_over()
   game.state = "finished" -- stops updates, activates splash
 end
 
+function game_message
+
+function game_status_message()
+  local prompt = game.last_input 
+end
+
 function game_status_update()
-  game.status_msg = game_status_message()
+  game.current_status_msg = game_status_message()
   if stats_settled() then
     game_over()
   end
@@ -60,13 +72,14 @@ function game_validate_input(txt)
   end
 end
 
+function game_draw_field()
+  ui.field.draw()
+  challenges_draw() 
+end
 
--- this one contains function references
-ui = { }
-
-draw_splash_welcome = widget_splash(WELCOME_MESSAGE).draw
-draw_splash_restart = function()
-  ui.splash.draw( game.stats_message )
+splash_draw_welcome = widget_splash(WELCOME_MESSAGE).draw
+splash_draw_restart = function()
+  ui.splash_restart.draw( game.stats_message )
 end
 
 
@@ -83,9 +96,9 @@ on_input = action_map({
 
 
 on_draw = action_map({
-  'loaded' = draw_splash_welcome,
+  'loaded' = ui.splash_welcome.draw,
   'active'  = game_draw_field,
-  'finished' = draw_splash_restart
+  'finished' = splash_draw_restart
 })
 
 on_tick = action_map({
@@ -98,7 +111,9 @@ function game_event_handler(map)
   end
 end
 
-function game_handlers_init()
+function game_init()
+  challenges_init() 
+
   local state_updater = game_event_handler(on_tick)
   local input_handler = game_event_handler(on_input)
   love.update = function(...)
@@ -107,11 +122,6 @@ function game_handlers_init()
   end
   compy.singleclick = game_event_handler(on_click)
   love.draw = game_event_handler(on_draw)
-end
-
-function game_init()
-  challenges_init() 
-  game_handlers_init(ui.terminal)
 end
 
 game_init()
