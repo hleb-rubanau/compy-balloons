@@ -52,14 +52,6 @@ function for_each(scope, callback)
   end
 end
 
-function shuffle(list)
-  math.randomseed(os.time())
-  for i = #list, 2, -1 do
-    local j = math.random(i)
-    list[i], list[j] = list[j], list[i]
-  end
-end
-
 function count_points(reference, target)
   local c = 0
   for i = 1, #reference do

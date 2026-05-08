@@ -1,5 +1,4 @@
 require("config")
-require("constants")
 require("challenges")
 require('graphics')
 require("stats")

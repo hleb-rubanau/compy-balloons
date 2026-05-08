@@ -1,5 +1,4 @@
 require("config")
-require("constants")
 require("helpers")
 
 gfx = love.graphics
