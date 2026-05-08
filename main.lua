@@ -17,13 +17,15 @@ function game_start()
   game_state = "active"
 end
 
-function game_over()
+function game_over()  
+  logdebug("GAME OVER")
   ui_status_finalize()
   game_state = "finished" -- stops updates, activates splash
 end
 
 function game_status_update()
   -- stats_settled() and game_over() or ui_status_update()
+  logdebug("GAME STATUS UPDATE")
   if stats_settled() then
     game_over()
   else
@@ -32,16 +34,15 @@ function game_status_update()
 end
 
 function game_update(dt)
-  logdebug("UPDATING GAME...")
   local t_old = stats.time
   local t_new = stats_add("time", dt)
   local new_second = math.floor(t_old) < math.floor(t_new)
 
   stats.changes = 0
   challenges_update(t_new, stats_event_registrator)
-  logdebug("CHALLENGES UPDATED, changes=%s", stats.changes)
   if new_second or stats.changes > 0 then
     game_status_update()
+    --safe_exec(game_status_update)
   end
 end
 

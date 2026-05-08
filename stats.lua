@@ -54,5 +54,6 @@ stats_events = action_map({
 
 stats_event_registrator = function(e, ...)
   stats_add("changes")
+  logdebug("EVENT: %s", e)
   stats_events[e](...)
 end
