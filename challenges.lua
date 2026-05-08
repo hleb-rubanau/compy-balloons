@@ -1,9 +1,7 @@
 --- task is just a textual definition/config
 -- challenge is a combination of stateless renderer and solver function
 require("config")
-require("constants")
 require("tasks")
-require("functions")
 require("helpers")
 require("os")
 
@@ -22,13 +20,6 @@ challenge_initial_state = {
   solved_y = -1,
   state = "loaded",
 }
-
-function reset_queue()
-  for i = 1, #TASKS do
-    queue[i] = i
-  end
-  shuffle(queue)
-end
 
 function challenges_init()
   tasks_init()
