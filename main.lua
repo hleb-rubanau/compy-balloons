@@ -13,8 +13,9 @@ game = {
 }
 
 function game_start()
-  stats_reset( game.total_count )
-  challenges_reset()
+  local n = game.total_count
+  stats_reset(n)
+  challenges_reset(n)
   game.status_msg = stats_status_message()
   game.state = "started"
   ui.terminal.write(game.status_msg)
@@ -23,11 +24,6 @@ end
 function game_over()
   game.stats_msg = stats_message()
   game.state = "finished" -- stops updates, activates splash
-end
-
-function challenges_update(t, callback)
-  for i in 1, game.total_count do
-  end
 end
 
 function game_status_update()
@@ -50,6 +46,14 @@ function game_update(dt)
   end
 end
 
+function game_validate_input(txt)
+  stats.changes = 0
+  challenges_validate(txt, stats.time, stats_change_handler)
+  if stats.changes > 0 then
+    game_status_update()
+  end
+end
+
 
 -- this one contains function references
 ui = { }
@@ -66,7 +70,7 @@ on_click = action_map({
 })
 
 on_input = action_map({
-  'active' = match_answers ,
+  'active' = game_validate_input ,
   'loaded' = on_text_match('start', game_start),
   'finished' = on_text_match('start', game_start)
 })
@@ -88,9 +92,6 @@ function game_event_handler(map)
   end
 end
 
-function game_state_init()
-end
-
 function game_terminal_init()
   local input_handler = game_event_handler(on_input)
   return terminal_init(input_handler)
@@ -102,7 +103,7 @@ function ui_init()
 end
 
 function game_handlers_init(terminal)
-  local state_updater = game_event_handler(on_update)
+  local state_updater = game_event_handler(on_tick)
   love.update = function(...)
     terminal.read() 
     state_updater(...)
@@ -112,25 +113,9 @@ function game_handlers_init(terminal)
 end
 
 function game_init()
-  --game_state_init()
-  challenges_init(game.total_count) -- these are stateless challenges/visuals
-  -- but when we will build challenges logic, we also need to pass events handler somehow
+  challenges_init() 
   ui_init()
   game_handlers_init(ui.terminal)
-end
-
-function game_reset()
-  if game.state=='active' then
-    return
-  end
-  -- NOTE: splash message should be generated on game end, not recalculated on each draw
-  game.wins_count = 0
-  game.loss_count = nil
-  game.active_count = nil,
-  game.visible_count = nil,
-  game.state = 'active'
-  game.score = 0,
-  game.time = 0
 end
 
 game_init()
