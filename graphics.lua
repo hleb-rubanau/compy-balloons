@@ -5,7 +5,7 @@ gfx = love.graphics
 default_opacity = 1.0
 -- allows using predefined colors with dynamic opacity
 function setColor(c, a)
-  gfx.setColor(c[1],c[2],c[3], a or c[4] or default_opacity)
+  gfx.setColor(c[1], c[2], c[3], a or c[4] or default_opacity)
 end
 
 -- Every function returns { geometry={w,h}, draw=fn }
@@ -17,7 +17,7 @@ end
 
 STYLE = {
   splash_background = {
-    color = COLORS.denim
+    color = COLORS.denim,
   },
   splash_header = {
     font = FONTS.h1,
@@ -25,35 +25,35 @@ STYLE = {
   },
   splash_subheader = {
     font = FONTS.h3,
-    color = COLORS.yellow
+    color = COLORS.yellow,
   },
   splash_hint = {
     font = FONTS.h5,
-    color.COLORS.white
+    color.COLORS.white,
   },
   card = {
-    bg_color      = COLORS.obsidian, -- 0.90
-    border_color  = COLORS.metallic,
-    border_width  = 2,
+    bg_color = COLORS.obsidian, -- 0.90
+    border_color = COLORS.metallic,
+    border_width = 2,
     corner_radius = 6,
-    padding       = nil,    -- nil → auto (0.35 × inner height)
+    padding = nil, -- nil → auto (0.35 × inner height)
   },
   card_highlight = {
-    bg_color      = COLORS.mocha, -- 0.92
-    border_color  = COLORS.gold, --{0.90, 0.70, 0.10, 1.00},
-    border_width  = 3,
+    bg_color = COLORS.mocha, -- 0.92
+    border_color = COLORS.gold, --{0.90, 0.70, 0.10, 1.00},
+    border_width = 3,
     corner_radius = 8,
-    padding       = nil,
+    padding = nil,
   },
   balloon_red = {
-    fill_color = COLORS.crimson
+    fill_color = COLORS.crimson,
     line_color = COLORS.ruby,
-    size       = 1,
+    size = 1,
   },
   balloon_blue = {
     fill_color = COLORS.azure,
     line_color = COLORS.denim,
-    size       = 1,
+    size = 1,
   },
   splash = {
     bg_color = COLORS.blue,
@@ -73,30 +73,29 @@ STYLE = {
   },
   splash_gameover_header = {
     font = FONTS.h3,
-    color = COLORS.white
+    color = COLORS.white,
   },
   splash_gameover_stats = {
     font = FONTS.h3,
-    color = COLORS.yellow
+    color = COLORS.yellow,
   },
   splash_gameover_hint = {
     font = FONTS.h5,
-    color = COLORS.white
-  }
+    color = COLORS.white,
+  },
 }
 
 STYLE_ACTIONS = {
-  font = gfx.setFont
-  color = setColor   -- not gfx.setColor!
+  font = gfx.setFont,
+  color = setColor, -- not gfx.setColor!
 }
 
 function apply_style(style)
-  for k,v in pairs(style) do
+  for k, v in pairs(style) do
     fn = STYLE_ACTIONS[k] or noop
     fn(v)
   end
 end
-
 
 -------------------------------------------------------------------------------
 -- widget_text_label
@@ -105,14 +104,14 @@ end
 -- Returns { geometry={w,h}, draw=fn }
 -------------------------------------------------------------------------------
 function widget_text_label(text, style)
-  local font    = style.font    or gfx.getFont()
+  local font = style.font or gfx.getFont()
   local padding = style.padding or 0
 
   local tw = font:getWidth(text)
   local th = font:getHeight()
 
   return {
-    geometry = {tw + padding*2, th + padding*2},
+    geometry = { tw + padding * 2, th + padding * 2 },
     draw = function(msg)
       -- we can alter the text withot changing geometry
       msg = msg or text
@@ -126,15 +125,15 @@ end
 
 function widget_text_line(text, style, align, width)
   align = align or "center"
-  style = style or { }
-  local font    = style.font    or gfx.getFont()
+  style = style or {}
+  local font = style.font or gfx.getFont()
   local padding = style.padding or 0
-  
+
   local th = font:getHeight()
-  local tw = (width or SCREEN_WIDTH)-padding*2
-  local wh = th+padding*2
+  local tw = (width or SCREEN_WIDTH) - padding * 2
+  local wh = th + padding * 2
   return {
-    geometry = {tw, th+padding*2},
+    geometry = { tw, th + padding * 2 },
     draw = function(msg)
       msg = msg or text
       gfx.push("all")
@@ -142,34 +141,33 @@ function widget_text_line(text, style, align, width)
       gfx.translate(0, -wh)
       gfx.print(msg, padding, padding, tw, align)
       gfx.pop()
-    end
-  } 
+    end,
+  }
 end
 
 function widget_text_multiline(text, ...)
   local styles = { ... }
-  local widgets = { }
+  local widgets = {}
   local max_w, max_h = 0, 0
   for i, t in ipairs(text.split("\n")) do
     widgets[i] = widget_text_label(t, (styles[i] or styles[1]))
-    local w, h  = unpack(widgets[i].geometry)
+    local w, h = unpack(widgets[i].geometry)
     max_w = math.max(max_w, w)
     max_h = math.max(max_h, h)
   end
 
   return {
     geometry = { max_w, max_h },
-    draw = function() 
+    draw = function()
       local this_y = 0
       for i, w in pairs(widgets) do
-        local this_x = (max_w - w.geometry[1])/2
-        draw_at( this_x, this_y, w.draw ) 
+        local this_x = (max_w - w.geometry[1]) / 2
+        draw_at(this_x, this_y, w.draw)
         this_y = this_y + w.geometry[2]
       end
-    end
+    end,
   }
 end
-
 
 -------------------------------------------------------------------------------
 -- widget_box
@@ -178,15 +176,15 @@ end
 -- Returns { geometry={w,h}, draw=fn, inner_pos={x,y} }
 -------------------------------------------------------------------------------
 function widget_box(inner_w, inner_h, style)
-  local pad = style.padding or (math.min(inner_w, inner_h)* 0.25)
-  local w   = inner_w + pad * 2
-  local h   = inner_h + pad * 2
-  local r   = style.corner_radius or 0
-  local b   = style.border_width or 2
+  local pad = style.padding or (math.min(inner_w, inner_h) * 0.25)
+  local w = inner_w + pad * 2
+  local h = inner_h + pad * 2
+  local r = style.corner_radius or 0
+  local b = style.border_width or 2
 
   return {
-    geometry  = {w, h},
-    inner_pos = {pad, pad},
+    geometry = { w, h },
+    inner_pos = { pad, pad },
     draw = function()
       gfx.push("all")
       gfx.setColor(style.bg_color)
@@ -199,7 +197,6 @@ function widget_box(inner_w, inner_h, style)
   }
 end
 
-
 -------------------------------------------------------------------------------
 -- widget_answered_box
 -- Two text labels (question | answer) side by side, separated by a gap,
@@ -211,12 +208,12 @@ end
 function widget_answered_box(question_label, answer_label, style)
   local qw, qh = unpack(question_label.geometry)
   local aw, ah = unpack(answer_label.geometry)
-  local gap  = style.gap or 12
+  local gap = style.gap or 12
 
   local inner_w = qw + gap + aw
   local inner_h = math.max(qh, ah)
-  local box     = widget_box(inner_w, inner_h, style)
-  local ix, iy  = unpack(box.inner_pos)
+  local box = widget_box(inner_w, inner_h, style)
+  local ix, iy = unpack(box.inner_pos)
 
   return {
     geometry = box.geometry,
@@ -225,18 +222,19 @@ function widget_answered_box(question_label, answer_label, style)
       box.draw()
       gfx.translate(ix, iy)
       -- question: vertically centred
-      gfx.push(); gfx.translate(0, (inner_h - qh) / 2)
+      gfx.push()
+      gfx.translate(0, (inner_h - qh) / 2)
       question_label.draw()
       gfx.pop()
       -- answer: vertically centred, offset to the right
-      gfx.push(); gfx.translate(qw + gap, (inner_h - ah) / 2)
+      gfx.push()
+      gfx.translate(qw + gap, (inner_h - ah) / 2)
       answer_label.draw()
       gfx.pop()
       gfx.pop()
     end,
   }
 end
-
 
 -------------------------------------------------------------------------------
 -- widget_balloon
@@ -247,60 +245,66 @@ end
 function widget_balloon(style)
   --local scales = {[1]=1.0, [2]=1.5, [3]=2.0}
   --local scale  = scales[style.size or 1] or 1.0
-  local scale = 1 + (size - 1)/2  
+  local scale = 1 + (size - 1) / 2
 
-  local rx, ry = 80*scale, 80*scale
-  local nubW   = 10*scale
-  local nubH   = 16*scale
-  local strL   = 40*scale
+  local rx, ry = 80 * scale, 80 * scale
+  local nubW = 10 * scale
+  local nubH = 16 * scale
+  local strL = 40 * scale
 
-  local fill  = style.fill_color or {0.90, 0.22, 0.27, 1}
-  local line  = style.line_color or {0.76, 0.07, 0.12, 1}
-  local nub_c = style.nub_color  or line
-  local str_c = style.str_color  or {0.6, 0.6, 0.6,  1}
-  local hi_c  = style.hi_color   or {1,   1,   1,   0.4}
-  local text  = style.text
-  local tc    = style.text_color or {1, 1, 1, 1}
-  local font  = style.font or FONTS.balloon or gfx.getFont()
+  local fill = style.fill_color or { 0.90, 0.22, 0.27, 1 }
+  local line = style.line_color or { 0.76, 0.07, 0.12, 1 }
+  local nub_c = style.nub_color or line
+  local str_c = style.str_color or { 0.6, 0.6, 0.6, 1 }
+  local hi_c = style.hi_color or { 1, 1, 1, 0.4 }
+  local text = style.text
+  local tc = style.text_color or { 1, 1, 1, 1 }
+  local font = style.font or FONTS.balloon or gfx.getFont()
 
   local cx, cy = rx, ry
 
   return {
-    geometry = {rx*2, ry*2 + nubH + strL},
+    geometry = { rx * 2, ry * 2 + nubH + strL },
     draw = function()
       gfx.push("all")
 
       gfx.setColor(fill)
       gfx.ellipse("fill", cx, cy, rx, ry)
       gfx.setColor(line)
-      gfx.setLineWidth(2*scale)
+      gfx.setLineWidth(2 * scale)
       gfx.ellipse("line", cx, cy, rx, ry)
 
       local nubTop = cy + ry
       gfx.setColor(nub_c)
-      gfx.polygon("fill", cx-nubW, nubTop, cx+nubW, nubTop, cx, nubTop+nubH)
+      gfx.polygon("fill", cx - nubW, nubTop, cx + nubW, nubTop, cx, nubTop + nubH)
 
       gfx.setColor(str_c)
       gfx.setLineWidth(1)
-      gfx.line(cx,   nubTop+nubH,
-               cx+5, nubTop+nubH + strL*0.4,
-               cx-4, nubTop+nubH + strL*0.7,
-               cx,   nubTop+nubH + strL)
+      gfx.line(
+        cx,
+        nubTop + nubH,
+        cx + 5,
+        nubTop + nubH + strL * 0.4,
+        cx - 4,
+        nubTop + nubH + strL * 0.7,
+        cx,
+        nubTop + nubH + strL
+      )
 
       gfx.setColor(hi_c)
       gfx.push("all")
-      gfx.translate(cx - 18*scale, cy - 13*scale)
+      gfx.translate(cx - 18 * scale, cy - 13 * scale)
       gfx.rotate(-math.pi / 5)
-      gfx.ellipse("fill", 0, 0, rx*0.22, ry*0.14)
+      gfx.ellipse("fill", 0, 0, rx * 0.22, ry * 0.14)
       gfx.pop()
 
       if text then
         gfx.setFont(font)
         local tw, th = font:getWidth(text), font:getHeight()
         gfx.setColor(1, 1, 1, 1)
-        gfx.ellipse("fill", cx, cy, tw*0.75, th*0.75)
+        gfx.ellipse("fill", cx, cy, tw * 0.75, th * 0.75)
         gfx.setColor(tc)
-        gfx.print(text, cx - tw/2, cy - th/2)
+        gfx.print(text, cx - tw / 2, cy - th / 2)
       end
 
       gfx.pop()
@@ -308,33 +312,39 @@ function widget_balloon(style)
   }
 end
 
-
 -------------------------------------------------------------------------------
 -- widget_animation / widget_animation_loop / widget_noop
 -------------------------------------------------------------------------------
 
 function widget_animation(...)
-  local frames = {...}
+  local frames = { ... }
   local N = #frames
   assert(N >= 1, "widget_animation: need at least one frame")
 
   local max_w, max_h = 0, 0
   for _, f in ipairs(frames) do
-    if f.geometry[1] > max_w then max_w = f.geometry[1] end
-    if f.geometry[2] > max_h then max_h = f.geometry[2] end
+    if f.geometry[1] > max_w then
+      max_w = f.geometry[1]
+    end
+    if f.geometry[2] > max_h then
+      max_h = f.geometry[2]
+    end
   end
 
   return {
-    geometry = {max_w, max_h},
-    length   = N,
+    geometry = { max_w, max_h },
+    length = N,
     draw = function(phase)
-      phase   = math.max(0, math.min(1, phase or 0))
-      local n = math.max(1, math.min(N, math.floor(phase*(N-1) + 0.5) + 1))
-      local f  = frames[n]
+      phase = math.max(0, math.min(1, phase or 0))
+      local n = math.max(1, math.min(N, math.floor(phase * (N - 1) + 0.5) + 1))
+      local f = frames[n]
       local ox = math.floor((max_w - f.geometry[1]) / 2)
       local oy = math.floor((max_h - f.geometry[2]) / 2)
       if ox ~= 0 or oy ~= 0 then
-        gfx.push(); gfx.translate(ox, oy); f.draw(); gfx.pop()
+        gfx.push()
+        gfx.translate(ox, oy)
+        f.draw()
+        gfx.pop()
       else
         f.draw()
       end
@@ -346,25 +356,27 @@ function widget_animation_loop(...)
   local anim = widget_animation(...)
   return {
     geometry = anim.geometry,
-    length   = anim.length,
-    draw     = function(phase, ...) anim.draw(phase % 1, ...) end,
+    length = anim.length,
+    draw = function(phase, ...)
+      anim.draw(phase % 1, ...)
+    end,
   }
 end
 
 function widget_noop()
-  return { geometry={0,0}, draw=function() end }
+  return { geometry = { 0, 0 }, draw = function() end }
 end
 
 function widget_invisible(orig)
   return {
     geometry = orig.geometry,
-    draw = function() end 
+    draw = function() end,
   }
 end
 
 function draw_at(x, y, fn, ...)
   gfx.push()
-  gfx.translate(x,y)
+  gfx.translate(x, y)
   fn(...)
   gfx.pop()
 end
@@ -374,7 +386,7 @@ function widget_with_dynamic_position(orig)
     geometry = orig.geometry,
     draw = function(x, y, ...)
       draw_at(x, y, orig.draw, ...)
-    end
+    end,
   }
 end
 
@@ -383,7 +395,7 @@ function widget_with_static_position(x, y, orig)
     geometry = orig.geometry,
     draw = function(...)
       draw_at(x, y, orig.draw, ...)
-    end
+    end,
   }
 end
 
@@ -395,26 +407,25 @@ function widget_stack(...)
       for i, w in ipairs(widgets) do
         w.draw(...)
       end
-    end
+    end,
   }
 end
 
 function widget_choice(maptable, default_key)
   if not default_key then
-    default_key = 'default'
+    default_key = "default"
   end
   return {
     geometry = maptable[default_key].geometry,
     draw = function(k, ...)
-      if maptable[k]~=nil and default_key then
+      if maptable[k] ~= nil and default_key then
         maptable[default_key].draw(...)
       else
         maptable[k].draw(...)
       end
-    end
+    end,
   }
 end
-
 
 -------------------------------------------------------------------------------
 -- widget_challenge
@@ -426,39 +437,40 @@ end
 -------------------------------------------------------------------------------
 function widget_challenge(question, answer, balloon_style, label_styles, box_style)
   balloon_style = balloon_style or STYLE.balloon_red
-  box_style     = box_style     or STYLE.card
-  label_styles  = label_styles  or {
-    question = { font=FONTS.question, color=COLORS.question },
-    answer   = { font=FONTS.answer,   color=COLORS.answer   },
-  }
+  box_style = box_style or STYLE.card
+  label_styles = label_styles
+    or {
+      question = { font = FONTS.question, color = COLORS.question },
+      answer = { font = FONTS.answer, color = COLORS.answer },
+    }
 
-  local q_label  = widget_text_label(question, label_styles.question)
-  local a_label  = widget_text_label(answer, label_styles.answer) 
-  
-  local qa_box   = widget_answered_box(q_label, a_label, box_style)
-  local q_box    = widget_answered_box(q_label, widget_invisible(a_label), box_style)
+  local q_label = widget_text_label(question, label_styles.question)
+  local a_label = widget_text_label(answer, label_styles.answer)
 
-  local textbox_anim = widget_animation(q_box, 
-                                        qa_box, 
-                                        widget_invisible(qa_box))
+  local qa_box = widget_answered_box(q_label, a_label, box_style)
+  local q_box = widget_answered_box(q_label, widget_invisible(a_label), box_style)
+
+  local textbox_anim = widget_animation(q_box, qa_box, widget_invisible(qa_box))
 
   local ref_balloon = widget_balloon(balloon_style)
   local bw, bh = unpack(ref_balloon.geometry)
   local tw, th = unpack(textbox_anim.geometry)
-  local overlap   = 5
+  local overlap = 5
   local balloon_x = (math.max(bw, tw) - bw) / 2
-  local box_x     = (math.max(bw, tw) - tw) / 2
-  local box_y     = bh - overlap
+  local box_x = (math.max(bw, tw) - tw) / 2
+  local box_y = bh - overlap
 
   return {
-    geometry = {math.max(bw, tw), bh + th - overlap},
+    geometry = { math.max(bw, tw), bh + th - overlap },
     draw = function(score, phase)
-      local b = widget_balloon(shallow_merge(balloon_style, { text=tostring(score or "") }))
+      local b = widget_balloon(shallow_merge(balloon_style, { text = tostring(score or "") }))
       gfx.push("all")
-      gfx.translate(balloon_x, 0); b.draw()
+      gfx.translate(balloon_x, 0)
+      b.draw()
       gfx.pop()
       gfx.push("all")
-      gfx.translate(box_x, box_y); textbox_anim.draw(phase or 0)
+      gfx.translate(box_x, box_y)
+      textbox_anim.draw(phase or 0)
       gfx.pop()
     end,
   }
@@ -467,45 +479,49 @@ end
 function draw_background(color, x, y, w, h)
   gfx.push("all")
   gfx.setColor(color)
-  gfx.rectangle("fill", x, y, w, h) 
+  gfx.rectangle("fill", x, y, w, h)
   gfx.pop()
+end
+
+-- enforces 'widget' format
+function widget(w, h, draw, opts)
+  local result = {
+    geometry = { w, h },
+    draw = draw,
+  }
 end
 
 function widget_field()
   local w, h = FIELD_WIDTH, FIELD_HEIGHT
   local bgcolor = STYLE.field_bg.color
-  return {
-    geometry = [ w, h ],
-    draw = function() 
-      draw_background(bgcolor, 0, 0, w, h)
-    end
-  }
+  local draw = function()
+    draw_background(bgcolor, 0, 0, w, h)
+  end
+  return widget(w, h, draw)
 end
 
-
-function widget_splash(m1, m2, m3, s1, s2, s3) 
+function widget_splash(m1, m2, m3, s1, s2, s3)
   local t = widget_text_line
   local sh = SCREEN_HEIGHT
   local s1 = s1 or STYLE.splash_header
   local s2 = s2 or STYLE.splash_subheader
   local s3 = s3 or STYLE.splash_hint
 
-  local w1, w2, w3 = t(m1,s1), t(m2,s2), t(m3,s3)
-  local y1, y2, y3 = 0.3*sh, 0.5*sh, 0.8*sh
+  local w1, w2, w3 = t(m1, s1), t(m2, s2), t(m3, s3)
+  local y1, y2, y3 = 0.3 * sh, 0.5 * sh, 0.8 * sh
 
-  return {
-    geometry = { SCREEN_WIDTH, SCREEN_HEIGHT },
-    draw = function(t1,t2,t3)
-      gfx.push("all")
-      apply_style(STYLES.splash_background)
-      gfx.rectangle("fill", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
-      draw_at(0, y1, w1.draw, t1)
-      draw_at(0, y2, w2.draw, t2)
-      draw_at(0, y3, w3.draw, t3) 
-      gfx.pop()
-    end
-  }
-end 
+  local draw = function(t1, t2, t3)
+    gfx.push("all")
+    apply_style(STYLES.splash_background)
+    gfx.rectangle("fill", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
+    draw_at(0, y1, w1.draw, t1)
+    draw_at(0, y2, w2.draw, t2)
+    draw_at(0, y3, w3.draw, t3)
+    gfx.pop()
+  end
+
+  return widget(SCREEN_WIDTH, SCREEN_HEIGHT, draw)
+end
 
 function widget_splash_welcome()
   local header = WELCOME_MESSAGE
@@ -524,7 +540,6 @@ function widget_splash_game_over()
     geometry = splash.geometry,
     draw = function(stats)
       splash.draw(nil, stats, nil)
-    end
+    end,
   }
 end
-
