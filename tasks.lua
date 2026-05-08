@@ -21,6 +21,9 @@ function task_add(taskdef)
   local t = shallow_merge(TASK_DEFAULTS, taskdef)
   t.widget = widget_challenge(t.q, t.a, t.style),
   t.validator = function(txt) return (txt~=t.a) end
+  t.runway = FIELD_HEIGHT - t.widget.geometry[1]
+  t.descend_speed = t.speed * (t.runway / ANSWER_TIMEOUT)
+  t.devalue_speed = t.speed * (t.score / ANSWER_TIMEOUT)
   table.insert(TASKS, t)
 end
 

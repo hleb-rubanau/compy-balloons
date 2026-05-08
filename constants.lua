@@ -17,10 +17,10 @@ function calc_panel_width()
   return f:getWidth(tostring(max_score)) * 1.5
 end
 
-screen_width = sw
-panel_width = calc_panel_width()
-field_height = sh * (1 - SCREEN_VPAD)
-field_width = sw - panel_width
-panel_x = field_width
+SCREEN_WIDTH = sw
+PANEL_WIDTH = calc_panel_width()
+FIELD_HEIGHT = sh * (1 - SCREEN_VPAD)
+FIELD_WIDTH = SCREEN_WIDTH - PANEL_WIDTH
+panel_x = FIELD_WIDTH
 score_y = (panel_width - fonts.score:getHeight()) / 2
 result_height = (field_height - panel_width) / #CHALLENGES
