@@ -15,13 +15,12 @@ end
 -- Presets
 -------------------------------------------------------------------------------
 
-STYLE = {
+STYLES = {
   field_background = {
     color = COLORS.silver,
   },
   splash_background = {
-    --color = COLORS.denim,
-    color = COLORS.red,
+    color = COLORS.denim,
   },
   splash_header = {
     font = FONTS.h1,
@@ -89,14 +88,14 @@ STYLE = {
   },
 }
 
-STYLE_ACTIONS = {
+STYLE_ACTIONGS = {
   font = gfx.setFont,
   color = setColor, -- not gfx.setColor!
 }
 
 function apply_style(style)
   for k, v in pairs(style) do
-    fn = STYLE_ACTIONS[k] or noop
+    fn = STYLE_ACTIONGS[k] or noop
     fn(v)
   end
 end
@@ -143,7 +142,7 @@ function widget_text_line(text, style, align, width)
       gfx.push("all")
       apply_style(style)
       gfx.translate(0, -wh)
-      gfx.print(msg, padding, padding, tw, align)
+      gfx.printf(msg, padding, padding, tw, align)
       gfx.pop()
     end,
   }
@@ -438,8 +437,8 @@ end
 -- draw(score, phase)
 -------------------------------------------------------------------------------
 function widget_challenge(question, answer, balloon_style, label_styles, box_style)
-  balloon_style = balloon_style or STYLE.balloon_red
-  box_style = box_style or STYLE.card
+  balloon_style = balloon_style or STYLES.balloon_red
+  box_style = box_style or STYLES.card
   label_styles = label_styles
     or {
       question = { font = FONTS.question, color = COLORS.question },
@@ -496,7 +495,7 @@ end
 
 function widget_field()
   local w, h = FIELD_WIDTH, FIELD_HEIGHT
-  local bgcolor = STYLE.field_background.color
+  local bgcolor = STYLES.field_background.color
   local draw = function()
     draw_background(bgcolor, 0, 0, w, h)
   end
@@ -506,17 +505,14 @@ end
 function widget_splash(m1, m2, m3, s1, s2, s3)
   local t = widget_text_line
   local sh = SCREEN_HEIGHT
-  local s1 = s1 or STYLE.splash_header
-  local s2 = s2 or STYLE.splash_subheader
-  local s3 = s3 or STYLE.splash_hint
+  local s1 = s1 or STYLES.splash_header
+  local s2 = s2 or STYLES.splash_subheader
+  local s3 = s3 or STYLES.splash_hint
 
   local w1, w2, w3 = t(m1, s1), t(m2, s2), t(m3, s3)
   local y1, y2, y3 = 0.3 * sh, 0.5 * sh, 0.8 * sh
     
-  ---logdebug("splash: %s, %s, %s", tostring(m1), tostring(m2), tostring(m3))
-
   local draw = function(t1, t2, t3)
-    --logdebug("splash draw: %s, %s, %s", tostring(t1), tostring(t2), tostring(t3))
     gfx.push("all")
     apply_style(STYLES.splash_background)
     gfx.rectangle("fill", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)

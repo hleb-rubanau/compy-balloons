@@ -89,13 +89,13 @@ end
 function game_init()
   challenges_init()
 
-  local state_updater = game_event_handler(on_tick, "tick")
+  local state_updater = game_event_handler(on_tick)
   local input_handler = game_event_handler(on_input, "input")
   hooks.update = function(...)
     ui_read_input(input_handler)
     state_updater(...)
   end
-  hooks.click = game_event_handler(on_click, "click")
+  hooks.click = game_event_handler(on_click)
   hooks.draw = game_event_handler(ui_draw_modes)
 end
 
