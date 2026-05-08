@@ -108,14 +108,14 @@ on_challenge_update = action_map({
 })
 
 function challenges_update(time, callback)
-  for i in 1, queue_size do
+  for i = 1, queue_size do
     local c = challenges[i]
     on_challenge_update[c.state](c, time, i, callback)
   end
 end
 
 function challenges_validate(text, time, callback)
-  for i in 1, queue_size do
+  for i = 1, queue_size do
     local c = challenges[i]
     if c.state == "actve" then
       challenge_validate(c, text, time, i, callback)
@@ -124,7 +124,7 @@ function challenges_validate(text, time, callback)
 end
 
 function challenges_draw()
-  for i in 1, queue_size do
+  for i = 1, queue_size do
     local c = challenges[i]
     if c.state == "actve" or c.state == "solved" then
       challenge_draw(c)
