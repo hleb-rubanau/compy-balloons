@@ -4,7 +4,7 @@ STATS_START = {
   wins = 0,
   losses = 0,
   visible = 0,
-  pending = 0,
+  --pending = 0,
   active = 0,
   changes = 0,
   score = 0,
@@ -12,13 +12,19 @@ STATS_START = {
   time = 0,
 }
 
-stats = setmetatable({}, { __index = 0 })
+stats = setmetatable({ }, { __index = 0 })
 
 function stats_reset(total)
   for k, v in pairs(STATS_START) do
     stats[k] = v
   end
-  stats.total = total or MAX_SLOTS
+  stats.pending = total or MAX_SLOTS
+end
+
+function stats_debug()
+  for k, v in pairs(stats) do
+    logdebug("\tstats[%s]: %s", tostring(k), tostring(v))
+  end
 end
 
 function stats_add(name, step)
