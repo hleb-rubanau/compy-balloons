@@ -69,7 +69,7 @@ end
 -- alias
 ui_read_input = terminal_read
 
-ui_draw_modes = action_map({
+ui_renderers = action_map({
   loaded = ui.splash_welcome.draw,
   active = function()
     ui.field.draw()

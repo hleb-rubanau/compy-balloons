@@ -66,7 +66,7 @@ on_input = action_map({
   finished = on_text_match("start", game_start),
 })
 
-function game_event_handler(map, debugname)
+function game_state_router(map, debugname)
   return function(...)
     if debugname then
       logdebug("DISPATCH[%s]: %s", debugname, game_state)
@@ -89,18 +89,21 @@ end
 function game_init()
   challenges_init()
 
-  local state_updater = game_event_handler(on_tick)
-  local input_handler = game_event_handler(on_input, "input")
+  local state_updater = game_state_router(on_tick)
+  local input_handler = game_state_router(on_input, "input")
   hooks.update = function(...)
     ui_read_input(input_handler)
     state_updater(...)
   end
-  hooks.click = game_event_handler(on_click)
-  hooks.draw = game_event_handler(ui_draw_modes)
+  hooks.click = game_state_router(on_click)
+  hooks.draw = game_state_router(ui_renderers)
+  love.update = hooks["update"]
+  compy.singleclick = hooks["click"]
+  love.draw = hooks["draw"]
 end
 
-love.update = hook("update")
-compy.singleclick = hook("click")
-love.draw = hook("draw")
+--love.update = hook("update")
+--compy.singleclick = hook("click")
+--love.draw = hook("draw")
 
 game_init()
