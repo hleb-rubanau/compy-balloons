@@ -1,13 +1,11 @@
 require("helpers")
 
-terminal = user_input()
+terminal = nil -- not initialied by default
 
 function terminal_read(callback)
-  local t = terminal
   callback = callback or noop
-  if not t.inp:is_empty() then
-    local msg = t.inp()
-    t.msg = msg
+  if not terminal:is_empty() then
+    local msg = terminal()
     callback(msg)
     return msg
   end
@@ -18,6 +16,7 @@ function terminal_write(msg)
 end
 
 function terminal_init()
+  terminal = user_input()
   return {
     write = terminal_write,
     read = terminal_read,

@@ -15,6 +15,7 @@ function game_start()
   ui_status_reset()
 
   game_state = "started"
+  logdebug("GAME START: %s", game_state)
 end
 
 function game_over()
@@ -77,7 +78,11 @@ end
 hooks = action_map({})
 function hook(name)
   return function(...)
-    hooks[name](...)
+    if love.DEBUG then
+      safe_exec(hooks[name], ...)
+    else
+      hooks[name](...)
+    end
   end
 end
 
