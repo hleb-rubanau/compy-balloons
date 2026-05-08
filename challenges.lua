@@ -6,7 +6,7 @@ require("helpers")
 require("os")
 
 challenges_queue_size = MAX_SLOTS
-challenges = { }
+challenges = {}
 
 challenge_initial_state = {
   x = -1,

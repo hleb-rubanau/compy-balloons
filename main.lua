@@ -97,6 +97,7 @@ function game_init()
   end
   hooks.click = game_state_router(on_click)
   hooks.draw = game_state_router(ui_renderers)
+
   love.update = hooks["update"]
   compy.singleclick = hooks["click"]
   love.draw = hooks["draw"]
