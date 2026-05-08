@@ -14,8 +14,7 @@ function game_start()
 
   ui_status_reset()
 
-  game_state = "started"
-  logdebug("GAME START: %s", game_state)
+  game_state = "active"
 end
 
 function game_over()
@@ -95,7 +94,7 @@ function game_init()
     ui_read_input(input_handler)
     state_updater(...)
   end
-  hooks.click = game_state_router(on_click)
+  hooks.click = game_state_router(on_click, "click")
   hooks.draw = game_state_router(ui_renderers)
 
   love.update = hooks["update"]
