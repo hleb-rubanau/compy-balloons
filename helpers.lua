@@ -28,3 +28,11 @@ function partial_reset(target, src)
     target[k]=v
   end
 end
+
+function map(src, fn)
+  local result = { }
+  for k, v in pairs(src) do
+    result[k] = fn(v)
+  end
+  return result
+end

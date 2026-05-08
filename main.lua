@@ -12,6 +12,12 @@ game = {
   prompt = SPLASH_HINT_START
 }
 
+ui = {
+  terminal = terminal_init(),
+  splash = widget_splash_gameover(),
+  initial_splash = widget_splash_welcome()
+}
+
 function game_start()
   local n = game.total_count
   stats_reset(n)
@@ -78,7 +84,7 @@ on_input = action_map({
 
 on_draw = action_map({
   'loaded' = draw_splash_welcome,
-  'active'  = draw_game,
+  'active'  = game_draw_field,
   'finished' = draw_splash_restart
 })
 
@@ -92,20 +98,11 @@ function game_event_handler(map)
   end
 end
 
-function game_terminal_init()
-  local input_handler = game_event_handler(on_input)
-  return terminal_init(input_handler)
-end
-
-function ui_init()
-  ui.terminal =  game_terminal_init()
-  ui.splash = widget_splash_restart()
-end
-
-function game_handlers_init(terminal)
+function game_handlers_init()
   local state_updater = game_event_handler(on_tick)
+  local input_handler = game_event_handler(on_input)
   love.update = function(...)
-    terminal.read() 
+    terminal_read(input_handler) 
     state_updater(...)
   end
   compy.singleclick = game_event_handler(on_click)
@@ -114,7 +111,6 @@ end
 
 function game_init()
   challenges_init() 
-  ui_init()
   game_handlers_init(ui.terminal)
 end
 

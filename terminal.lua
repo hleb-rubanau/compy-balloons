@@ -1,27 +1,14 @@
 require('helpers')
 
-terminal = {
-  inp = nil ,
-  msg = nil,
-  read = nil,
-  write = nil,
-  on_read = nil
-}
+terminal = user_input()
 
-function terminal_init(on_read)
-  terminal.inp = user_input()
-  terminal.write = terminal_write
-  terminal.read = terminal_read
-  terminal.on_read = on_read or noop
-  return terminal 
-end
-
-function terminal_read()
+function terminal_read(callback)
   local t = terminal
+  callback = callback or noop
   if not t.inp:is_empty() then
     local msg = t.inp()
     t.msg = msg
-    t.on_read(msg)
+    callback(msg)
     return msg
   end
 end

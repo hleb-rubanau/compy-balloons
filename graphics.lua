@@ -3,6 +3,11 @@ require("constants")
 require("helpers")
 
 gfx = love.graphics
+default_opacity = 1.0
+-- allows using predefined colors with dynamic opacity
+function setColor(c, a)
+  gfx.setColor(c[1],c[2],c[3], a or c[4] or default_opacity)
+end
 
 -- Every function returns { geometry={w,h}, draw=fn }
 -- All drawing assumes local (0,0). Callers handle translate/push/pop.
@@ -12,36 +17,86 @@ gfx = love.graphics
 -------------------------------------------------------------------------------
 
 STYLE = {
+  splash_background = {
+    color = COLORS.denim
+  },
+  splash_header = {
+    font = FONTS.h1,
+    color = COLORS.yellow,
+  },
+  splash_subheader = {
+    font = FONTS.h3,
+    color = COLORS.yellow
+  },
+  splash_hint = {
+    font = FONTS.h5,
+    color.COLORS.white
+  },
   card = {
-    bg_color      = {0.10, 0.10, 0.10, 0.90},
-    border_color  = {0.30, 0.30, 0.30, 1.00},
+    bg_color      = COLORS.obsidian, -- 0.90
+    border_color  = COLORS.metallic,
     border_width  = 2,
     corner_radius = 6,
     padding       = nil,    -- nil → auto (0.35 × inner height)
   },
   card_highlight = {
-    bg_color      = {0.15, 0.12, 0.00, 0.92},
-    border_color  = {0.90, 0.70, 0.10, 1.00},
+    bg_color      = COLORS.mocha, -- 0.92
+    border_color  = COLORS.gold, --{0.90, 0.70, 0.10, 1.00},
     border_width  = 3,
     corner_radius = 8,
     padding       = nil,
   },
   balloon_red = {
-    fill_color = {0.90, 0.22, 0.27, 1},
-    line_color = {0.76, 0.07, 0.12, 1},
+    fill_color = COLORS.crimson
+    line_color = COLORS.ruby,
     size       = 1,
   },
   balloon_blue = {
-    fill_color = {0.20, 0.45, 0.85, 1},
-    line_color = {0.10, 0.25, 0.65, 1},
+    fill_color = COLORS.azure,
+    line_color = COLORS.denim,
     size       = 1,
   },
   splash = {
-    bg_color = Color[Color.blue],
-    font_color = Color[Color.blue]
+    bg_color = COLORS.blue,
+    font_color = COLORS.yellow,
+  },
+  splash_welcome_header = {
+    font = FONTS.h2,
+    color = COLORS.yellow,
+  },
+  splash_welcome_subheader = {
+    font = FONTS.h3,
+    color = COLORS.yellow,
+  },
+  splash_welcome_hint = {
+    font = FONTS.h5,
+    color = COLORS.white,
+  },
+  splash_gameover_header = {
+    font = FONTS.h3,
+    color = COLORS.white
+  },
+  splash_gameover_stats = {
+    font = FONTS.h3,
+    color = COLORS.yellow
+  },
+  splash_gameover_hint = {
+    font = FONTS.h5,
+    color = COLORS.white
   }
 }
 
+STYLE_ACTIONS = {
+  font = gfx.setFont
+  color = setColor   -- not gfx.setColor!
+}
+
+function apply_style(style)
+  for k,v in pairs(style) do
+    fn = STYLE_ACTIONS[k] or noop
+    fn(v)
+  end
+end
 
 
 -------------------------------------------------------------------------------
@@ -52,7 +107,6 @@ STYLE = {
 -------------------------------------------------------------------------------
 function widget_text_label(text, style)
   local font    = style.font    or gfx.getFont()
-  local color   = style.color   or {1, 1, 1, 1}
   local padding = style.padding or 0
 
   local tw = font:getWidth(text)
@@ -60,14 +114,37 @@ function widget_text_label(text, style)
 
   return {
     geometry = {tw + padding*2, th + padding*2},
-    draw = function()
+    draw = function(msg)
+      -- we can alter the text withot changing geometry
+      msg = msg or text
       gfx.push("all")
-      gfx.setFont(font)
-      gfx.setColor(color)
-      gfx.print(text, padding, padding)
+      apply_style(style)
+      gfx.print(msg, padding, padding)
       gfx.pop()
     end,
   }
+end
+
+function widget_text_line(text, style, align, width)
+  align = align or "center"
+  style = style or { }
+  local font    = style.font    or gfx.getFont()
+  local padding = style.padding or 0
+  
+  local th = font:getHeight()
+  local tw = (width or SCREEN_WIDTH)-padding*2
+  local wh = th+padding*2
+  return {
+    geometry = {tw, th+padding*2},
+    draw = function(msg)
+      msg = msg or text
+      gfx.push("all")
+      apply_style(style)
+      gfx.translate(0, -wh)
+      gfx.print(msg, padding, padding, tw, align)
+      gfx.pop()
+    end
+  } 
 end
 
 function widget_text_multiline(text, ...)
@@ -388,30 +465,67 @@ function widget_challenge(question, answer, balloon_style, label_styles, box_sty
   }
 end
 
-function draw_backrgound(color, x, y, w, h)
+function draw_background(color, x, y, w, h)
   gfx.push("all")
   gfx.setColor(color)
   gfx.rectangle("fill", x, y, w, h) 
   gfx.pop()
 end
 
-function widgetSplash(txt)
-  local sw, sh = gfx.getDimensions()
-  local multiline_txt = widget_text_multiline(txt, STYLES.splash) 
-  local x = (sw - multiline_txt.geometry[1])/2 
-  local y = (sh - multiline_txt.geometry[2])/2
+function widget_field()
+  local w, h = FIELD_WIDTH, FIELD_HEIGHT
+  local bgcolor = STYLE.field_bg.color
   return {
-    geometry = { sw, sh },
-    draw = function ()
-      draw_backrgound(Colors[Color.bg], 0, 0, sw, sh)
-      draw_at(x, y, multiline_txt.draw)
+    geometry = [ w, h ],
+    draw = function() 
+      draw_background(bgcolor, 0, 0, w, h)
     end
   }
 end
 
-function widget_splash_game_over()
-  local opening_message = "Game Over!"
-  local stats_template = "Solved: %s/%s | Score: %s | Time: %ss"
-  local stats_stub = string.format(stats_template, 99, 99, 100, 100)
-  local restart_msg = 
+
+function widget_splash(m1, m2, m3, s1, s2, s3) 
+  local t = widget_text_line
+  local sh = SCREEN_HEIGHT
+  local s1 = s1 or STYLE.splash_header
+  local s2 = s2 or STYLE.splash_subheader
+  local s3 = s3 or STYLE.splash_hint
+
+  local w1, w2, w3 = t(m1,s1), t(m2,s2), t(m3,s3)
+  local y1, y2, y3 = 0.3*sh, 0.5*sh, 0.8*sh
+
+  return {
+    geometry = { SCREEN_WIDTH, SCREEN_HEIGHT },
+    draw = function(t1,t2,t3)
+      gfx.push("all")
+      apply_style(STYLES.splash_background)
+      gfx.rectangle("fill", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
+      draw_at(0, y1, w1.draw, t1)
+      draw_at(0, y2, w2.draw, t2)
+      draw_at(0, y3, w3.draw, t3) 
+      gfx.pop()
+    end
+  }
+end 
+
+function widget_splash_welcome()
+  local header = WELCOME_MESSAGE
+  local subheader = WELCOME_SUBHEADER
+  local hint = SPLASH_HINT_START
+
+  return widget_splash(header, subheader, hint)
 end
+
+function widget_splash_game_over()
+  local header = GAME_OVER_HEADER
+  local hint = SPLASH_HINT_RESTART
+  local splash = widget_splash(header, nil, hint)
+
+  return {
+    geometry = splash.geometry,
+    draw = function(stats)
+      splash.draw(nil, stats, nil)
+    end
+  }
+end
+
