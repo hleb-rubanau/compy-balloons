@@ -4,6 +4,7 @@ function colors_from_base(...)
   for _, cname in pairs(base) do
     result[cname] = Color[Color[cname]]
   end
+  return result
 end
 
 -- custom color aliases -- semantic names not allowed!
