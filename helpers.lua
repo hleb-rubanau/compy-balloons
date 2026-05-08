@@ -13,10 +13,10 @@ function action_map(t)
   })
 end
 
-function on_text_match(text, fn, ...)
-  return function(txt)
+function on_text_match(text, fn)
+  return function(txt, ...)
     if txt == text then
-      return fn(...)
+      return fn(txt, ...)
     end
   end
 end
