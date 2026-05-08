@@ -28,31 +28,9 @@ function stats_add(name, step)
   return new_val
 end
 
-function stats_message()
-  local w = stats.wins
-  local n = stats.total
-  local s = stats.score
-  local t = stats.time
-  return fmt(STATS_TEMPLATE, w, n, s, t)
-end
-
-function status_message()
-  local w = stats.wins
-  local p = stats.pending
-  local n = stats.total - p
-  local s = stats.score
-  local t = stats.time
-  return fmt(STATUS_TEMPLATE, w, n, p, s, t)
-end
-
 function stats_settled()
   local active_count = stats.pending + stats.visible
   return (active_count == 0)
-end
-
-function stats_on_launch(score)
-  stats_add("visible")
-  stats_add("pending", -1)
 end
 
 stats_events = action_map({
@@ -74,7 +52,7 @@ stats_events = action_map({
   end,
 })
 
-stats_change_handler = function(e, ...)
+stats_event_registrator = function(e, ...)
   stats_add("changes")
   stats_events[e](...)
 end

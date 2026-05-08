@@ -1,70 +1,31 @@
 require("config")
 require("challenges")
-require("graphics")
 require("stats")
-require("terminal")
+require("ui")
 
-game = {
-  state = "loaded",
-  total_count = MAX_SLOTS,
-  msg_user_hint = SPLASH_HINT_START,
-  msg_stats_final = nil,
-  msg_stats_current = nil,
-}
-
-ui = {
-  terminal = terminal_init(),
-  field = widget_field(),
-  splash_welcome = widget_splash_welcome(),
-  splash_restart = widget_splash_gameover(),
-  challenges = {
-    draw = challenges_draw,
-  },
-}
+game_state = "loaded"
 
 function game_start()
-  local n = game.total_count
+  local n = MAX_SLOTS
   stats_reset(n)
   challenges_reset(n)
 
-  game.msg_user_hint = STARTING_PROMPT
-  game.msg_stats_current = nil
-  game.msg_stats_final = nil
+  ui_status_reset()
 
-  game.state = "started"
-  -- should be part of draw?
-  ui_refresh_status()
+  game_state = "started"
 end
 
 function game_over()
-  game.msg_user_hint = nil
-  game.msg_stats_final = stats_message()
-  game.msg_stats_current = nil
-  game.state = "finished" -- stops updates, activates splash
-  ui_refresh_status()
-end
-
-function game_status_message()
-  local prompt = game.last_input
-end
-
-function ui_status_prompt()
-  local inp = game.last_input
-  return inp and fmt(GAME_PROMPT, inp) or STARTING_PROMPT
-end
-
-function ui_refresh_status()
-  local hint = game.msg_user_hint or "    "
-  local status = game.msg_stats_final or game.msg_stats_current
-  local statusline = hint .. "   " .. status
-  ui.terminal.write(statusline)
+  ui_status_finalize()
+  game_state = "finished" -- stops updates, activates splash
 end
 
 function game_status_update()
-  game.current_status_msg = game_status_message()
-  ui_refresh_status()
+  -- stats_settled() and game_over() or ui_status_update()
   if stats_settled() then
     game_over()
+  else
+    ui_status_update()
   end
 end
 
@@ -74,7 +35,7 @@ function game_update(dt)
   local new_second = math.floor(t_old) < math.floor(t_new)
 
   stats.changes = 0
-  challenges_update(t_new, stats_change_handler)
+  challenges_update(t_new, stats_event_registrator)
 
   if new_second or stats.changes > 0 then
     game_status_update()
@@ -82,8 +43,8 @@ function game_update(dt)
 end
 
 function game_validate_input(txt)
-  challenges_validate(txt, stats.time, stats_change_handler)
-  game.user_hint = fmt(GAME_PROMPT, txt)
+  challenges_validate(txt, stats.time, stats_event_registrator)
+  game.msg_user_hint = fmt(GAME_PROMPT, txt)
   game_status_update()
 end
 
@@ -102,20 +63,9 @@ on_input = action_map({
   finished = on_text_match("start", game_start),
 })
 
-on_draw = action_map({
-  loaded = ui.splash_welcome.draw,
-  active = function()
-    ui.field.draw()
-    ui.challenges.draw()
-  end,
-  finished = function()
-    ui.splash_restart.draw(game.msg_stats_final)
-  end,
-})
-
 function game_event_handler(map)
   return function(...)
-    map[game.state](...)
+    map[game_state](...)
   end
 end
 
@@ -125,11 +75,11 @@ function game_init()
   local state_updater = game_event_handler(on_tick)
   local input_handler = game_event_handler(on_input)
   love.update = function(...)
-    terminal_read(input_handler)
+    ui_read_input(input_handler)
     state_updater(...)
   end
   compy.singleclick = game_event_handler(on_click)
-  love.draw = game_event_handler(on_draw)
+  love.draw = game_event_handler(ui_draw_modes)
 end
 
 game_init()

@@ -35,7 +35,7 @@ function challenges_init()
 end
 
 function challenges_reset(qs)
-  queue_size = math.min(qs, #challenges)
+  queue_size = math.min((qs or MAX_SLOTS), #challenges)
   shuffle(challenges)
   for i in 1, #challenges do
     local c = challenges[i]
