@@ -26,7 +26,6 @@ end
 
 function game_status_update()
   -- stats_settled() and game_over() or ui_status_update()
-  logdebug("GAME STATUS UPDATE")
   if stats_settled() then
     game_over()
   else
