@@ -23,7 +23,7 @@ end
 
 function stats_add(name, step)
   step = step or 1
-  local new_val = stata[name] + step
+  local new_val = stats[name] + step
   stats[name] = new_val
   return new_val
 end
