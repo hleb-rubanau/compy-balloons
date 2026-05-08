@@ -5,6 +5,7 @@ STATS_START = {
   losses = 0,
   visible = 0,
   --pending = 0,
+  --total = 0,
   active = 0,
   changes = 0,
   score = 0,
@@ -15,10 +16,11 @@ STATS_START = {
 stats = setmetatable({ }, { __index = 0 })
 
 function stats_reset(total)
+  stats.total = total or MAX_SLOTS
+  stats.pending = stats.total
   for k, v in pairs(STATS_START) do
     stats[k] = v
   end
-  stats.pending = total or MAX_SLOTS
 end
 
 function stats_debug()
