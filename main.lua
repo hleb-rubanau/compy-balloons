@@ -32,13 +32,14 @@ function game_status_update()
 end
 
 function game_update(dt)
+  logdebug("UPDATING GAME...")
   local t_old = stats.time
   local t_new = stats_add("time", dt)
   local new_second = math.floor(t_old) < math.floor(t_new)
 
   stats.changes = 0
   challenges_update(t_new, stats_event_registrator)
-
+  logdebug("CHALLENGES UPDATED, changes=%s", stats.changes)
   if new_second or stats.changes > 0 then
     game_status_update()
   end
@@ -97,7 +98,7 @@ function game_init()
   hooks.click = game_state_router(on_click, "click")
   hooks.draw = game_state_router(ui_renderers)
 
-  love.update = hooks["update"]
+  love.update = hook("update")
   compy.singleclick = hooks["click"]
   love.draw = hooks["draw"]
 end
