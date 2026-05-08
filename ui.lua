@@ -48,15 +48,15 @@ end
 
 function ui_status_update()
   ui_messages.status = ui_status_message()
-  logdebug("HINT: "..tostring(ui_messages.hint))
-  logdebug("STATUS: "..tostring(ui_messages.status))
+  logdebug("HINT: " .. tostring(ui_messages.hint))
+  logdebug("STATUS: " .. tostring(ui_messages.status))
 end
 
 function ui_status_finalize()
   ui_messages.hint = SPLASH_HINT_RESTART
   ui_messages.results = ui_results_message()
-  logdebug("HINT: "..ui_messages.hint)
-  logdebug("RESULTS: "..ui_messages.results)
+  logdebug("HINT: " .. ui_messages.hint)
+  logdebug("RESULTS: " .. ui_messages.results)
 end
 
 function ui_status_reset()
@@ -69,7 +69,7 @@ function ui_draw_status()
   local hint = ui_messages.hint or "    "
   local status = ui_messages.results or ui_messages.status
   local statusline = hint .. "   " .. status
-  logdebug("STATUS: "..statusline)
+  logdebug("STATUS: " .. statusline)
   ui.terminal.write(statusline)
 end
 

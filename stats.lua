@@ -13,7 +13,7 @@ STATS_START = {
   time = 0,
 }
 
-stats = setmetatable({ }, { __index = 0 })
+stats = setmetatable({}, { __index = 0 })
 
 function stats_reset(total)
   stats.total = total or MAX_SLOTS

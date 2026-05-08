@@ -17,7 +17,7 @@ function game_start()
   game_state = "active"
 end
 
-function game_over()  
+function game_over()
   logdebug("GAME OVER")
   stats_debug()
   ui_status_finalize()
