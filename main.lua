@@ -5,11 +5,10 @@ require("stats")
 
 game = {
   state = 'loaded',
-  current_status_msg = "",
-  final_status_msg = "",
-  last_input = nil,
   total_count = MAX_SLOTS,
-  prompt = SPLASH_HINT_START
+  msg_user_hint = SPLASH_HINT_START,
+  msg_stats_final = nil,
+  msg_stats_current = nil,
 }
 
 ui = { 
@@ -26,18 +25,21 @@ function game_start()
   local n = game.total_count
   stats_reset(n)
   challenges_reset(n)
-  game.last_input = nil
-  game.current_status_msg = ""
+
+  game.msg_user_hint = STARTING_PROMPT
+  game.msg_stats_current = nil
+  game.msg_stats_final = nil
+
   game.state = "started"
   -- should be part of draw?
   ui_refresh_status()
 end
 
 function game_over()
-  game.stats_msg = stats_message()
+  game.msg_user_hint = nil
+  game.msg_stats_final = stats_message()
+  game.msg_stats_current = nil
   game.state = "finished" -- stops updates, activates splash
-  game.last_input = nil
-  game.current_status_message = game.stats_msg
   ui_refresh_status()
 end
 
@@ -51,9 +53,9 @@ function ui_status_prompt()
 end
 
 function ui_refresh_status()
-  local prompt = ui_status_prompt()
-  local status = game.current_status_message
-  local statusline = prompt .."   "... status 
+  local hint = game.msg_user_hint or "    "
+  local status = game.msg_stats_final or game.msg_stats_current
+  local statusline = hint  .."   ".. status 
   ui.terminal.write(statusline)
 end
 
@@ -79,8 +81,8 @@ function game_update(dt)
 end
 
 function game_validate_input(txt)
-  game.last_input = txt
   challenges_validate(txt, stats.time, stats_change_handler)
+  game.user_hint = fmt(GAME_PROMPT, txt)
   game_status_update()
 end
 
@@ -91,7 +93,7 @@ end
 
 splash_draw_welcome = widget_splash(WELCOME_MESSAGE).draw
 splash_draw_restart = function()
-  ui.splash_restart.draw( game.stats_message )
+  ui.splash_restart.draw( game.msg_stats_final )
 end
 
 
