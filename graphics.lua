@@ -20,7 +20,8 @@ STYLE = {
     color = COLORS.silver,
   },
   splash_background = {
-    color = COLORS.denim,
+    --color = COLORS.denim,
+    color = COLORS.red,
   },
   splash_header = {
     font = FONTS.h1,
@@ -511,8 +512,11 @@ function widget_splash(m1, m2, m3, s1, s2, s3)
 
   local w1, w2, w3 = t(m1, s1), t(m2, s2), t(m3, s3)
   local y1, y2, y3 = 0.3 * sh, 0.5 * sh, 0.8 * sh
+    
+  ---logdebug("splash: %s, %s, %s", tostring(m1), tostring(m2), tostring(m3))
 
   local draw = function(t1, t2, t3)
+    --logdebug("splash draw: %s, %s, %s", tostring(t1), tostring(t2), tostring(t3))
     gfx.push("all")
     apply_style(STYLES.splash_background)
     gfx.rectangle("fill", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)

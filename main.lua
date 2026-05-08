@@ -2,6 +2,8 @@ require("config")
 require("challenges")
 require("stats")
 require("ui")
+require("helpers")
+require("debugfunc")
 
 game_state = "loaded"
 
@@ -63,23 +65,37 @@ on_input = action_map({
   finished = on_text_match("start", game_start),
 })
 
-function game_event_handler(map)
+function game_event_handler(map, debugname)
   return function(...)
+    if debugname then
+      logdebug("DISPATCH[%s]: %s", debugname, game_state)
+    end
     map[game_state](...)
+  end
+end
+
+hooks = action_map({})
+function hook(name)
+  return function(...)
+    hooks[name](...)
   end
 end
 
 function game_init()
   challenges_init()
 
-  local state_updater = game_event_handler(on_tick)
-  local input_handler = game_event_handler(on_input)
-  love.update = function(...)
+  local state_updater = game_event_handler(on_tick, "tick")
+  local input_handler = game_event_handler(on_input, "input")
+  hooks.update = function(...)
     ui_read_input(input_handler)
     state_updater(...)
   end
-  compy.singleclick = game_event_handler(on_click)
-  love.draw = game_event_handler(ui_draw_modes)
+  hooks.click = game_event_handler(on_click, "click")
+  hooks.draw = game_event_handler(ui_draw_modes)
 end
+
+love.update = hook("update")
+compy.singleclick = hook("click")
+love.draw = hook("draw")
 
 game_init()

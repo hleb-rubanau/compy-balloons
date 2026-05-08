@@ -5,6 +5,7 @@ require("graphics")
 require("terminal")
 
 require("helpers")
+require("debugfunc")
 
 ui = {
   terminal = terminal_init(),
