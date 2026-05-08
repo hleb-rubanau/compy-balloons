@@ -6,7 +6,7 @@ require("helpers")
 require("os")
 
 challenges_queue_size = MAX_SLOTS
-challenges = {}
+challenges = { }
 
 challenge_initial_state = {
   x = -1,
@@ -23,26 +23,28 @@ challenge_initial_state = {
 
 function challenges_init()
   tasks_init()
-  for i, t in ipairs(TASKS) do
-    challenges[i] = {
+  for i = 1, #TASKS do
+    local t = TASKS[i]
+    local c = {
       task = t,
       widget = widget_with_dynamic_position(t.widget),
       w = t.widget.geometry[0],
       h = t.widget.geometry[1],
     }
-    partial_reset(challenges[i], challenge_initial_state)
+    partial_reset(c, challenge_initial_state)
+    challenges[i] = c
   end
 end
 
 function challenges_reset(qs)
   queue_size = math.min((qs or MAX_SLOTS), #challenges)
   shuffle(challenges)
-  for i in 1, #challenges do
+  for i = 1, #challenges do
     local c = challenges[i]
     partial_reset(c, challenge_initial_state)
   end
-  for i in 1, queue_size do
-    c.state = "pending"
+  for i = 1, queue_size do
+    challenges[i].state = "pending"
   end
 end
 
