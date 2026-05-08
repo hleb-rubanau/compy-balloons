@@ -2,6 +2,7 @@ require("config")
 require("challenges")
 require("graphics")
 require("stats")
+require("terminal")
 
 game = {
   state = "loaded",
@@ -86,19 +87,13 @@ function game_validate_input(txt)
   game_status_update()
 end
 
-function game_draw_field()
-  ui.field.draw()
-  challenges_draw()
-end
-
-splash_draw_welcome = widget_splash(WELCOME_MESSAGE).draw
-splash_draw_restart = function()
-  ui.splash_restart.draw(game.msg_stats_final)
-end
-
 on_click = action_map({
   loaded = game_start,
   finished = game_start,
+})
+
+on_tick = action_map({
+  active = game_update,
 })
 
 on_input = action_map({
@@ -109,13 +104,15 @@ on_input = action_map({
 
 on_draw = action_map({
   loaded = ui.splash_welcome.draw,
-  active = game_draw_field,
-  finished = splash_draw_restart,
+  active = function()
+    ui.field.draw()
+    ui.challenges.draw()
+  end,
+  finished = function() 
+    ui.splash_restart.draw(game.msg_stats_final)
+  end
 })
 
-on_tick = action_map({
-  active = game_update,
-})
 
 function game_event_handler(map)
   return function(...)
