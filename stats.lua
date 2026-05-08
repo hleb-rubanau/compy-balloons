@@ -9,14 +9,14 @@ STATS_START = {
   changes = 0,
   score = 0,
   score_max = 0,
-  time = 0 
+  time = 0,
 }
 
-stats = setmetatable({ }, {__index = 0})
+stats = setmetatable({}, { __index = 0 })
 
 function stats_reset(total)
   for k, v in pairs(STATS_START) do
-    stats[k]=v
+    stats[k] = v
   end
   stats.total = total or MAX_SLOTS
 end
@@ -51,31 +51,30 @@ function stats_settled()
 end
 
 function stats_on_launch(score)
-  stats_add('visible')
-  stats_add('pending',-1)
+  stats_add("visible")
+  stats_add("pending", -1)
 end
 
 stats_events = action_map({
-  'launched' = function(score) 
-    stats_add('visible')
-    stats_add('pending',-1)
-    stats_add('max_score', score)
+  launched = function(score)
+    stats_add("visible")
+    stats_add("pending", -1)
+    stats_add("max_score", score)
   end,
-  'solved' = function(score)
-    stats_add('wins')
-    stats_add('score', score)
+  solved = function(score)
+    stats_add("wins")
+    stats_add("score", score)
   end,
-  'expired' = function() 
-    stats_add('losses')
-    stats_add('visible', -1)
+  expired = function()
+    stats_add("losses")
+    stats_add("visible", -1)
   end,
-  'cleared' = function()  -- win after animation
-    stats_add('visible', -1)
-  end
+  cleared = function() -- post-win animation ended
+    stats_add("visible", -1)
+  end,
 })
 
 stats_change_handler = function(e, ...)
-  stats_add('changes')
+  stats_add("changes")
   stats_events[e](...)
 end
-
