@@ -1,4 +1,3 @@
-
 MAX_SLOTS = 12
 
 ANSWER_TIMEOUT = 10
@@ -9,7 +8,7 @@ DEVALUE_INTERVAL = 1
 DEVALUE_BY = 1
 WIN_DELAY = 3
 
-ANIMATION_TIME = 1.5 
+ANIMATION_TIME = 1.5
 MAX_ASCEND_TIME = 3
 
 WELCOME_MESSAGE = "Baloons game"
@@ -22,8 +21,8 @@ STATUS_TEMPLATE = "Solved: %s/%s | Pending: %s | Score: %s | Time: %ds"
 
 GAME_OVER_HEADER = "Game Over"
 SPLASH_HINT_BASE = "click or type 'start'"
-SPLASH_HINT_START = "To start: "..SPLASH_HINT_BASE
-SPLASH_HINT_RESTART = "To restart: "..SPLASH_HINT_BASE
+SPLASH_HINT_START = "To start: " .. SPLASH_HINT_BASE
+SPLASH_HINT_RESTART = "To restart: " .. SPLASH_HINT_BASE
 
 SCREEN_VPAD = 0.1
 BALLOON_RADIUS = 24
@@ -35,12 +34,12 @@ FONT_SIZES = {
   h4 = 20,
   h5 = 16,
   h6 = 14,
-  default = 12
+  default = 12,
 }
 
 TASK_DEFAULTS = {
   score = 10,
   size = 1,
   style = "blue",
-  speed = 1
+  speed = 1,
 }

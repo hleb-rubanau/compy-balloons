@@ -1,4 +1,4 @@
-require('helpers')
+require("helpers")
 
 terminal = user_input()
 
@@ -18,8 +18,8 @@ function terminal_write(msg)
 end
 
 function terminal_init()
-  return { 
+  return {
     write = terminal_write,
-    read = terminal_read
+    read = terminal_read,
   }
 end
