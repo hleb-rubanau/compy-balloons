@@ -7,7 +7,7 @@ game = {
   state = 'loaded',
   current_status_msg = "",
   final_status_msg = "",
-  last_input = "",
+  last_input = nil,
   total_count = MAX_SLOTS,
   prompt = SPLASH_HINT_START
 }
@@ -26,25 +26,40 @@ function game_start()
   local n = game.total_count
   stats_reset(n)
   challenges_reset(n)
-  game.current_status_msg = stats_status_message()
+  game.last_input = nil
+  game.current_status_msg = ""
   game.state = "started"
   -- should be part of draw?
-  ui.terminal.write(game.current_status_msg)
+  ui_refresh_status()
 end
 
 function game_over()
   game.stats_msg = stats_message()
   game.state = "finished" -- stops updates, activates splash
+  game.last_input = nil
+  game.current_status_message = game.stats_msg
+  ui_refresh_status()
 end
-
-function game_message
 
 function game_status_message()
   local prompt = game.last_input 
 end
 
+function ui_status_prompt()
+  local inp = game.last_input
+  return inp and fmt(GAME_PROMPT, inp) or STARTING_PROMPT
+end
+
+function ui_refresh_status()
+  local prompt = ui_status_prompt()
+  local status = game.current_status_message
+  local statusline = prompt .."   "... status 
+  ui.terminal.write(statusline)
+end
+
 function game_status_update()
   game.current_status_msg = game_status_message()
+  ui_refresh_status()
   if stats_settled() then
     game_over()
   end
@@ -64,11 +79,9 @@ function game_update(dt)
 end
 
 function game_validate_input(txt)
-  stats.changes = 0
+  game.last_input = txt
   challenges_validate(txt, stats.time, stats_change_handler)
-  if stats.changes > 0 then
-    game_status_update()
-  end
+  game_status_update()
 end
 
 function game_draw_field()
