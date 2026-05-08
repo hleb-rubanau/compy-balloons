@@ -1,6 +1,9 @@
-require("stats")
-require("graphics")
 require("challenges")
+require("stats")
+
+require("graphics")
+require("terminal")
+
 require("helpers")
 
 ui = {
