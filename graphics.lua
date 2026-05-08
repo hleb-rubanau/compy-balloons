@@ -490,6 +490,7 @@ function widget(w, h, draw, opts)
     geometry = { w, h },
     draw = draw,
   }
+  return result
 end
 
 function widget_field()
