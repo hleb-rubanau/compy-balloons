@@ -16,6 +16,9 @@ end
 -------------------------------------------------------------------------------
 
 STYLE = {
+  field_background = {
+    color = COLORS.silver,
+  },
   splash_background = {
     color = COLORS.denim,
   },
@@ -491,7 +494,7 @@ end
 
 function widget_field()
   local w, h = FIELD_WIDTH, FIELD_HEIGHT
-  local bgcolor = STYLE.field_bg.color
+  local bgcolor = STYLE.field_background.color
   local draw = function()
     draw_background(bgcolor, 0, 0, w, h)
   end
