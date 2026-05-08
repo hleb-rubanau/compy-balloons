@@ -108,11 +108,10 @@ on_draw = action_map({
     ui.field.draw()
     ui.challenges.draw()
   end,
-  finished = function() 
+  finished = function()
     ui.splash_restart.draw(game.msg_stats_final)
-  end
+  end,
 })
-
 
 function game_event_handler(map)
   return function(...)
