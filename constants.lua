@@ -21,6 +21,8 @@ SCREEN_WIDTH = sw
 PANEL_WIDTH = calc_panel_width()
 FIELD_HEIGHT = sh * (1 - SCREEN_VPAD)
 FIELD_WIDTH = SCREEN_WIDTH - PANEL_WIDTH
+ASCEND_SPEED = FIELD_HEIGHT / MAX_ASCEND_TIME
+
 panel_x = FIELD_WIDTH
 score_y = (panel_width - fonts.score:getHeight()) / 2
 result_height = (field_height - panel_width) / #CHALLENGES

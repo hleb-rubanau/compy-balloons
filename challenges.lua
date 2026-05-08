@@ -7,8 +7,21 @@ require("functions")
 require("helpers")
 require("os")
 
-queue = { }
+challenges_queue_size = MAX_SLOTS
 challenges = { }
+
+challenge_initial_state = {
+  x = -1,
+  y = 0,
+  phase = 0,
+  score = 0,
+  launched = -1,
+  solved = -1,
+  expired = -1,
+  cleared = -1,
+  solved_y = -1,
+  state = 'loaded'
+}
 
 function reset_queue()
   for i = 1, #TASKS do
@@ -17,36 +30,28 @@ function reset_queue()
   shuffle(queue)
 end
 
-function challenges_init(n)
-  n = n or MAX_SLOTS
+function challenges_init()
   tasks_init()
-  for i in 1, n do
-    challenges[i] = { }
+  for i, t in ipairs(TASKS) do
+    challenges[i] = { 
+      task = t,
+      widget = widget_with_dynamic_position(t.widget),
+      w = t.widget.geometry[0],
+      h = t.widget.geometry[1]
+    }
+    partial_reset(challenges[i], challenge_initial_state)
   end
 end
 
-function challenge_reset(c,t)
-  c.launched = nil
-  c.solved = nil
-  c.expired = nil
-  c.vanished = nil
-  c.x = nil
-  c.y = 0
-  c.phase = 0
-  c.score = nil -- this is current score? or max?
-  c.task = t
-  c.widget = t.widget
-  c.w, c.h = unpack(t.widget.geometry)
-  c.validator = t.validator
-  c.init_score = t.score
-end
-
-function challenges_reset()
-  reset_queue()
+function challenges_reset(qs)
+  queue_size = math.min(qs, #challenges)
+  shuffle(challenges)
   for i in 1, #challenges do
     local c = challenges[i]
-    local T = TASKS[ queue[i] ]
-    challenge_reset(c, T)
+    partial_reset(c, challenge_initial_state)
+  end
+  for i in 1, queue_size do
+    c.state = 'pending'
   end
 end
 
@@ -60,9 +65,9 @@ function challenge_maybe_launch(c, t, i, callback)
   if launch_due then
     c.launched = t
     c.x = get_launch_position(c, t)
-    c.score = c.init_score
+    c.score = c.task.score
     c.state = 'active'
-    callback('launched', c.score)
+    callback('launched', c.task.score)
   end
 end
 
@@ -77,8 +82,30 @@ function challenge_descend(c, t, i, callback)
   end
 end
 
-function challenge_ascend(c, t, i, callback) 
+function challenge_validate(c, text, t, i, callback)
+  if c.task.validator(text) then
+    c.solved = t
+    c.solved_y = c.y
+    c.state = 'solved'
+    callback('solved', c.score, i)
+  end 
+end
 
+function challenge_ascend(c, t, i, callback) 
+  local elapsed = t - c.solved
+  local float_time = math.min(0, elapsed - ANIMATION_TIME)
+  
+  c.phase = elapsed / ANIMATION_TIME
+  c.y = c.solved_y - float_time * ASCEND_SPEED
+  if c.y <= 0 then
+    c.cleared=t
+    c.state = "cleared"
+    callback("cleared")
+  end
+end
+
+function challenge_draw(c)
+  c.widget.draw( c.x, x.y, c.score, c.phase )
 end
 
 on_challenge_update = action_map({
@@ -88,21 +115,29 @@ on_challenge_update = action_map({
 })
 
 function challenges_update(time, callback)
-  for i in 1, #challenges do
+  for i in 1, queue_size do
     local c = challenges[i]
-    on_challenge_update[ c.state ](c, t, i, callback) 
+    on_challenge_update[ c.state ](c, time, i, callback) 
   end
 end
 
-
-function is_launchable(i,t)
-  if challenges[i].launched = false then
-    return (i - 1) * LAUNCH_DELAY < t
+function challenges_validate(text, time, callback)
+  for i in 1, queue_size do
+    local c = challenges[i]
+    if c.state == 'actve' then
+      challenge_validate(c, text, time, i, callback) 
+    end
   end
 end
 
-challenge_updaters = action_map({
+function challenges_draw()
+  for i in 1, queue_size do
+    local c = challenges[i]
+    if c.state == 'actve' or c.state=='solved' then
+      challenge_draw(c)
+    end
+  end
+end
 
-})
 
 challenges_init()

@@ -8,6 +8,9 @@ DEVALUE_INTERVAL = 1
 DEVALUE_BY = 1
 WIN_DELAY = 3
 
+ANIMATION_TIME = 1.5 
+MAX_ASCEND_TIME = 3
+
 WELCOME_MESSAGE = "Click to start"
 RESULTS_MESSAGE = "Your score: %s (%s/%s)\nClick to restart"
 STARTING_PROMPT = "Type and press <Enter>"
