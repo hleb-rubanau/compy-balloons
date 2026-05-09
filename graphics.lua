@@ -40,7 +40,15 @@ STYLES = {
     font = FONTS.h5,
     color = COLORS.white,
   },
-  card = {
+  question = {
+    font = FONTS.h5,
+    color = COLORS.yellow,
+  },
+  answer = {
+    font = FONTS.h4,
+    color = COLORS.green
+  },
+  box = {
     bg_color = COLORS.obsidian, -- 0.90
     border_color = COLORS.metallic,
     border_width = 2,
@@ -448,20 +456,17 @@ end
 --   phase 1   → blank (noop)
 -- draw(score, phase)
 -------------------------------------------------------------------------------
-function widget_challenge(question, answer, balloon_style, label_styles, box_style)
+function widget_challenge(question, answer, balloon_style)
+
   balloon_style = BALLOON_STYLES[balloon_style] or BALLOON_STYLES.red
-  box_style = box_style or STYLES.card
-  label_styles = label_styles
-    or {
-      question = { font = FONTS.question, color = COLORS.question },
-      answer = { font = FONTS.answer, color = COLORS.answer },
-    }
+  box_style = STYLES.card
+  label_styles = { question = STYLES.question, answer = STYLES.answer }
 
-  local q_label = widget_text_label(question, label_styles.question)
-  local a_label = widget_text_label(answer, label_styles.answer)
+  local q_label = widget_text_label(question, STYLES.question)
+  local a_label = widget_text_label(answer, STYLES.answer) 
 
-  local qa_box = widget_answered_box(q_label, a_label, box_style)
-  local q_box = widget_answered_box(q_label, widget_invisible(a_label), box_style)
+  local qa_box = widget_answered_box(q_label, a_label, STYLES.box)
+  local q_box = widget_answered_box(q_label, widget_invisible(a_label), STYLES.box)
 
   local textbox_anim = widget_animation(q_box, qa_box, widget_invisible(qa_box))
 

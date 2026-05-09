@@ -132,7 +132,7 @@ end
 function challenges_draw()
   for i = 1, queue_size do
     local c = challenges[i]
-    if c.state == "actve" or c.state == "solved" then
+    if c.state == "active" or c.state == "solved" then
       challenge_draw(c)
     end
   end
