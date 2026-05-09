@@ -62,9 +62,6 @@ function challenge_maybe_launch(c, t, i, callback)
     c.score = c.task.score
     c.state = "active"
     callback("launched", c.task.score)
-    Log.debug("LAUNCHED: "..c.task.q)
-    --inspect(fmt("challenge[%s]",i), c)
-    --inspect(fmt("challenge[%s].task",i), c.task)
   end
 end
 
@@ -139,4 +136,3 @@ function challenges_draw()
   end
 end
 
-challenges_init()

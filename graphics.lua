@@ -288,7 +288,6 @@ function widget_balloon(style, scale)
   return {
     geometry = { rx * 2, ry * 2 + nubH + strL },
     draw = function(text)
-      Log.debug(fmt("Draw text %s" , text))
       gfx.push("all")
 
       gfx.setColor(fill)

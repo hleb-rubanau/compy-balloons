@@ -40,17 +40,13 @@ function game_update(dt)
   challenges_update(t_new, stats_event_registrator)
   if new_second or stats.changes > 0 then
     game_status_update()
-    --safe_exec(game_status_update)
   end
 end
 
 function game_validate_input(txt)
   challenges_validate(txt, stats.time, stats_event_registrator)
   ui_set_hint(fmt(GAME_PROMPT, txt), true)
-  --Log.debug("INPUT VALIDATED")
-  --stats_debug()
   game_status_update()
-  --Log.debug(fmt("GAME STATE=%s", game_state))
 end
 
 game_commands = action_map({
@@ -106,9 +102,5 @@ function game_init()
   love.draw = hooks["draw"]
   love.update = hook("update")
 end
-
---love.update = hook("update")
---compy.singleclick = hook("click")
---love.draw = hook("draw")
 
 game_init()
