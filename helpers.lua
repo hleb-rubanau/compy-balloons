@@ -14,14 +14,6 @@ function action_map(t, fallback)
   })
 end
 
-function on_text_match(text, fn)
-  return function(txt, ...)
-    if txt == text then
-      return fn(txt, ...)
-    end
-  end
-end
-
 function shallow_merge(a, b)
   local out = {}
   for k, v in pairs(a) do
