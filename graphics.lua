@@ -20,9 +20,9 @@ STYLES = {
     color = COLORS.silver,
   },
   status_bar = {
-    color = COLORS.azure,
-    font = FONTS.small,
-    padding = 2,
+    color = COLORS.denim,
+    font = FONTS.default,
+    padding = 10,
     align = "right",
   },
   splash_background = {
