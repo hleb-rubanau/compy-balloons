@@ -50,7 +50,7 @@ STYLES = {
   },
   answer = {
     font = FONTS.h4,
-    color = COLORS.blue
+    color = COLORS.blue,
   },
   box = {
     bg_color = COLORS.obsidian, -- 0.90
@@ -68,7 +68,7 @@ STYLES = {
   },
   balloon_label = {
     font = FONTS.h3,
-    color = COLORS.black
+    color = COLORS.black,
   },
   card_highlight = {
     bg_color = COLORS.mocha, -- 0.92
@@ -106,28 +106,28 @@ STYLES = {
     color = COLORS.white,
   },
 }
-  
-BALLOON_STYLES = { 
+
+BALLOON_STYLES = {
   red = {
     fill_color = COLORS.crimson,
-    line_color = COLORS.ruby
+    line_color = COLORS.ruby,
   },
   blue = {
     fill_color = COLORS.azure,
-    line_color = COLORS.denim
+    line_color = COLORS.denim,
   },
   yellow = {
     fill_color = COLORS.yellow,
-    line_color = COLORS.gold
+    line_color = COLORS.gold,
   },
   orange = {
     fill_color = COLORS.orange,
-    line_color = COLORS.gold
+    line_color = COLORS.gold,
   },
   green = {
     fill_color = COLORS.green,
-    line_color = COLORS.denim
-  }
+    line_color = COLORS.denim,
+  },
 }
 
 STYLE_ACTIONGS = {
@@ -301,7 +301,7 @@ function widget_balloon(style, scale)
   local str_c = style.str_color or { 0.6, 0.6, 0.6, 1 }
   local hi_c = style.hi_color or { 1, 1, 1, 0.4 }
   --local text = style.text
-  local tc =   STYLES.balloon_label.color
+  local tc = STYLES.balloon_label.color
   local font = STYLES.balloon_label.font
 
   local cx, cy = rx, ry
@@ -482,14 +482,13 @@ end
 -- draw(score, phase)
 -------------------------------------------------------------------------------
 function widget_challenge(question, answer, balloon_style, balloon_size)
-
   balloon_style = BALLOON_STYLES[balloon_style] or BALLOON_STYLES.red
   box_style = STYLES.card
   label_styles = { question = STYLES.question, answer = STYLES.answer }
 
   local q_label = widget_text_label(question, STYLES.question)
   local q_label_answered = widget_text_label(question, STYLES.question_answered)
-  local a_label = widget_text_label(answer, STYLES.answer) 
+  local a_label = widget_text_label(answer, STYLES.answer)
 
   local qa_box = widget_answered_box(q_label_answered, a_label, STYLES.box_answered)
   local q_box = widget_answered_box(q_label, widget_invisible(a_label), STYLES.box)
@@ -504,13 +503,12 @@ function widget_challenge(question, answer, balloon_style, balloon_size)
   local box_x = (math.max(bw, tw) - tw) / 2
   local box_y = bh - overlap
 
-
   return {
     geometry = { math.max(bw, tw), bh + th - overlap },
     draw = function(score, phase)
       phase = phase or 0
       gfx.push("all")
-      draw_at(balloon_x, 0, w_balloon.draw, score )
+      draw_at(balloon_x, 0, w_balloon.draw, score)
 
       default_opacity = 1.0 - math.min(1, phase)
       draw_at(box_x, box_y, textbox_anim.draw, (phase or 0))

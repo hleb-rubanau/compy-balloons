@@ -135,4 +135,3 @@ function challenges_draw()
     end
   end
 end
-
