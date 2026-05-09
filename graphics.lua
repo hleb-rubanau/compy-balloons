@@ -55,6 +55,10 @@ STYLES = {
     corner_radius = 6,
     padding = nil, -- nil → auto (0.35 × inner height)
   },
+  balloon_label = {
+    font = FONTS.h3,
+    color = COLORS.black
+  },
   card_highlight = {
     bg_color = COLORS.mocha, -- 0.92
     border_color = COLORS.gold, --{0.90, 0.70, 0.10, 1.00},
@@ -265,7 +269,7 @@ end
 function widget_balloon(style)
   local scale = style.size or 1
 
-  local rx, ry = 80 * scale, 80 * scale
+  local rx, ry = 40 * scale, 40 * scale
   local nubW = 10 * scale
   local nubH = 16 * scale
   local strL = 40 * scale
@@ -275,15 +279,16 @@ function widget_balloon(style)
   local nub_c = style.nub_color or line
   local str_c = style.str_color or { 0.6, 0.6, 0.6, 1 }
   local hi_c = style.hi_color or { 1, 1, 1, 0.4 }
-  local text = style.text
-  local tc = style.text_color or { 1, 1, 1, 1 }
-  local font = style.font or FONTS.balloon or gfx.getFont()
+  --local text = style.text
+  local tc =   STYLES.balloon_label.color
+  local font = STYLES.balloon_label.font
 
   local cx, cy = rx, ry
 
   return {
     geometry = { rx * 2, ry * 2 + nubH + strL },
-    draw = function()
+    draw = function(text)
+      Log.debug(fmt("Draw text %s" , text))
       gfx.push("all")
 
       gfx.setColor(fill)
@@ -319,8 +324,8 @@ function widget_balloon(style)
       if text then
         gfx.setFont(font)
         local tw, th = font:getWidth(text), font:getHeight()
-        gfx.setColor(1, 1, 1, 1)
-        gfx.ellipse("fill", cx, cy, tw * 0.75, th * 0.75)
+        --gfx.setColor(1, 1, 1, 1)
+        --gfx.ellipse("fill", cx, cy, tw * 0.75, th * 0.75)
         gfx.setColor(tc)
         gfx.print(text, cx - tw / 2, cy - th / 2)
       end
@@ -478,17 +483,14 @@ function widget_challenge(question, answer, balloon_style)
   local box_x = (math.max(bw, tw) - tw) / 2
   local box_y = bh - overlap
 
+  local w_balloon = widget_balloon(balloon_style)
+
   return {
     geometry = { math.max(bw, tw), bh + th - overlap },
     draw = function(score, phase)
-      local b = widget_balloon(shallow_merge(balloon_style, { text = tostring(score or "") }))
       gfx.push("all")
-      gfx.translate(balloon_x, 0)
-      b.draw()
-      gfx.pop()
-      gfx.push("all")
-      gfx.translate(box_x, box_y)
-      textbox_anim.draw(phase or 0)
+      draw_at(balloon_x, 0, w_balloon.draw, score )
+      draw_at(box_x, box_y, textbox_anim.draw, (phase or 0))
       gfx.pop()
     end,
   }
