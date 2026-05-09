@@ -29,8 +29,8 @@ function challenges_init()
     local c = {
       task = t,
       widget = widget_with_dynamic_position(t.widget),
-      w = t.widget.geometry[0],
-      h = t.widget.geometry[1],
+      w = t.widget.geometry[1],
+      h = t.widget.geometry[2],
     }
     partial_reset(c, challenge_initial_state)
     challenges[i] = c
@@ -112,7 +112,7 @@ on_challenge_update = action_map({
 function challenges_update(time, callback)
   for i = 1, queue_size do
     local c = challenges[i]
-    logdebug("challenges[%s].state=%s", i, c.state)
+    --logdebug("challenges[%s].state=%s", i, c.state)
     on_challenge_update[c.state](c, time, i, callback)
   end
 end
