@@ -57,7 +57,6 @@ end
 function challenge_maybe_launch(c, t, i, callback)
   local launch_due = (i - 1) * LAUNCH_DELAY < t
   if launch_due then
-    --logdebug("LAUNCH DUE: %s", i)
     c.launched = t
     c.x = get_launch_position(c, t)
     c.score = c.task.score
@@ -112,7 +111,6 @@ on_challenge_update = action_map({
 function challenges_update(time, callback)
   for i = 1, queue_size do
     local c = challenges[i]
-    --logdebug("challenges[%s].state=%s", i, c.state)
     on_challenge_update[c.state](c, time, i, callback)
   end
 end

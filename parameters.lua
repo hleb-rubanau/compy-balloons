@@ -15,13 +15,13 @@ MAX_ASCEND_TIME = 3
 WELCOME_MESSAGE = "Baloons game"
 WELCOME_SUBHEADER = "Type answers to release baloons"
 RESULTS_MESSAGE = "Your score: %s (%s/%s)\nClick to restart"
-STARTING_PROMPT = "Type and press <Enter>"
+STARTING_PROMPT = "Type answer and hit <Enter>"
 GAME_PROMPT = "Your answer: <%s>"
 STATS_TEMPLATE = "Solved: %s/%s | Score: %s | Time: %ds"
 STATUS_TEMPLATE = "Solved: %s | Missed: %s | Active: %s | Pending: %s | Score: %s | Time: %ds"
 
 GAME_OVER_HEADER = "Game Over"
-SPLASH_HINT_BASE = "Type <start> or click"
+SPLASH_HINT_BASE = "Type <start>"
 SPLASH_HINT_START = "To start: " .. SPLASH_HINT_BASE
 SPLASH_HINT_RESTART = "To restart: " .. SPLASH_HINT_BASE
 

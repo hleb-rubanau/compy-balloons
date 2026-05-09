@@ -21,7 +21,6 @@ end
 
 function terminal_init()
   terminal = user_input()
-  logdebug("terminal initialized")
   return {
     write = terminal_write,
     read = terminal_read,

@@ -60,11 +60,6 @@ function game_command(txt)
   game_commands[txt]()
 end
 
-on_click = action_map({
-  loaded = game_start,
-  finished = game_start,
-})
-
 on_tick = action_map({
   active = game_update,
 })
@@ -104,10 +99,8 @@ function game_init()
     ui_read_input(input_handler)
     state_updater(...)
   end
-  hooks.click = game_state_router(on_click)
   hooks.draw = game_state_router(ui_renderers)
 
-  compy.singleclick = hooks["click"]
   ui_show_command_prompt()
   love.draw = hooks["draw"]
   love.update = hook("update")

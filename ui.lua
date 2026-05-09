@@ -45,10 +45,9 @@ function ui_status_message()
   return fmt(STATUS_TEMPLATE, w, f, a, p, s, t)
 end
 
-function ui_set_hint(txt, ...)
+function ui_set_hint(txt)
   ui_messages.hint = txt
-  --logdebug("SET HINT: " .. txt)
-  ui_draw_hint(...)
+  ui_draw_hint()
 end
 
 function ui_status_update()
@@ -66,10 +65,10 @@ function ui_status_reset()
   ui_set_hint(STARTING_PROMPT)
 end
 
-function ui_draw_hint(...)
+-- NOTE: won't work if there was no real input
+function ui_draw_hint()
   local hint = ui_messages.hint or "         "
-  --logdebug("DRAWING HINT: " .. hint)
-  ui.terminal.write(hint, ...)
+  ui.terminal.write(hint)
 end
 
 function ui_show_command_prompt()
@@ -78,9 +77,6 @@ end
 
 function ui_draw_status()
   local status = ui_messages.results or ui_messages.status
-  --local statusline = hint .. "   " .. status
-  --logdebug("STATUS: " .. statusline)
-  --ui.terminal.write(statusline)
   ui.status_bar.draw(status)
 end
 
