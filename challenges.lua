@@ -62,7 +62,9 @@ function challenge_maybe_launch(c, t, i, callback)
     c.score = c.task.score
     c.state = "active"
     callback("launched", c.task.score)
-    inspect(fmt("challenge[%s]",i), c)
+    Log.debug("LAUNCHED: "..c.task.q)
+    --inspect(fmt("challenge[%s]",i), c)
+    --inspect(fmt("challenge[%s].task",i), c.task)
   end
 end
 
@@ -78,6 +80,7 @@ function challenge_descend(c, t, i, callback)
 end
 
 function challenge_validate(c, text, t, i, callback)
+  Log.debug(fmt("VALIDATING:\n\tq=%s\n\ta=%s\n\te=%s\n", c.task.q, text, c.task.a))
   if c.task.validator(text) then
     c.solved = t
     c.solved_y = c.y
@@ -117,11 +120,9 @@ function challenges_update(time, callback)
 end
 
 function challenges_validate(text, time, callback)
-  Log.debug(fmt("Validating text=%s", tostring(text)))
   for i = 1, queue_size do
     local c = challenges[i]
-    Log.debug(fmt("Validating for challenge #%s (state=%s)", i, tostring(c.state)))
-    if c.state == "actve" then
+    if c.state == "active" then
       challenge_validate(c, text, time, i, callback)
     end
   end
