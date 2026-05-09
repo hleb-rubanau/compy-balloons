@@ -75,7 +75,7 @@ function ui_draw_status()
   --logdebug("STATUS: " .. statusline)
   --ui.terminal.write(statusline)
   ui.terminal.write(hint)
-  ui.status_bar.write(status)
+  ui.status_bar.draw(status)
 end
 
 -- alias
