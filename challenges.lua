@@ -71,7 +71,8 @@ end
 function challenge_descend(c, t, i, callback)
   local elapsed = t - c.launched
   c.y = elapsed * c.task.descend_speed
-  c.score = math.ceil(1 - elapsed * c.task.devalue_speed)
+  --c.score = math.ceil(1 - elapsed * c.task.devalue_speed)
+  c.score = math.ceil(elapsed * c.task.devalue_speed)
   if c.y > c.task.runway then
     c.expired = t
     c.state = "expired"
@@ -91,7 +92,7 @@ end
 
 function challenge_ascend(c, t, i, callback)
   local elapsed = t - c.solved
-  local float_time = math.min(0, elapsed - ANIMATION_TIME)
+  local float_time = math.max(0, elapsed - ANIMATION_TIME)
 
   c.phase = elapsed / ANIMATION_TIME
   c.y = c.solved_y - float_time * ASCEND_SPEED

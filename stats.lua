@@ -52,7 +52,9 @@ stats_events = action_map({
     stats_add("max_score", score)
   end,
   solved = function(score)
+    Log.debug(fmt("SOLVED, score=%s", tostring(score)))
     stats_add("wins")
+    stats_debug()
     stats_add("score", score)
   end,
   expired = function()
@@ -66,5 +68,6 @@ stats_events = action_map({
 
 stats_event_registrator = function(e, ...)
   stats_add("changes")
+  Log.debug(fmt("SOLVED, score=%s", tostring(score)))
   stats_events[e](...)
 end

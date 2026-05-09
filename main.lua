@@ -18,8 +18,6 @@ function game_start()
 end
 
 function game_over()
-  logdebug("GAME OVER")
-  --stats_debug()
   ui_status_finalize()
   game_state = "finished" -- stops updates, activates splash
 end
@@ -49,7 +47,10 @@ end
 function game_validate_input(txt)
   challenges_validate(txt, stats.time, stats_event_registrator)
   ui_set_hint(fmt(GAME_PROMPT, txt), true)
+  --Log.debug("INPUT VALIDATED")
+  --stats_debug()
   game_status_update()
+  --Log.debug(fmt("GAME STATE=%s", game_state))
 end
 
 game_commands = action_map({
