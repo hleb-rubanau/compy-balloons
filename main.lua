@@ -48,7 +48,7 @@ end
 
 function game_validate_input(txt)
   challenges_validate(txt, stats.time, stats_event_registrator)
-  game.msg_user_hint = fmt(GAME_PROMPT, txt)
+  ui_set_hint( fmt(GAME_PROMPT, txt) )
   game_status_update()
 end
 
