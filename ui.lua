@@ -52,8 +52,6 @@ end
 
 function ui_status_update()
   ui_messages.status = ui_status_message()
-  logdebug("HINT: " .. tostring(ui_messages.hint))
-  logdebug("STATUS: " .. tostring(ui_messages.status))
 end
 
 function ui_status_finalize()
@@ -69,7 +67,7 @@ end
 
 function ui_draw_hint(...)
   local hint = ui_messages.hint or "         "
-  ui.terminal.write(hint)
+  ui.terminal.write(hint, ...)
 end
 
 function ui_show_command_prompt()
