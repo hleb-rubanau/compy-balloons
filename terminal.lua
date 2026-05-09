@@ -12,7 +12,10 @@ function terminal_read(callback)
   end
 end
 
-function terminal_write(msg)
+function terminal_write(msg, flushed)
+  if not flushed then
+    terminal_read()
+  end
   input_text(msg, nil)
 end
 

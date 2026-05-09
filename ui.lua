@@ -45,9 +45,9 @@ function ui_status_message()
   return fmt(STATUS_TEMPLATE, w, f, a, p, s, t)
 end
 
-function ui_set_hint(txt)
+function ui_set_hint(txt, ...)
   ui_messages.hint = txt
-  ui_draw_hint()
+  ui_draw_hint(...)
 end
 
 function ui_status_update()
@@ -67,9 +67,8 @@ function ui_status_reset()
   ui_set_hint(STARTING_PROMPT)
 end
 
-function ui_draw_hint()
+function ui_draw_hint(...)
   local hint = ui_messages.hint or "         "
-  ui.terminal.read(noop)
   ui.terminal.write(hint)
 end
 
