@@ -5,10 +5,11 @@ function noop()
   -- literally does nothing
 end
 
-function action_map(t)
+function action_map(t, fallback)
+  fallback = fallback or noop
   return setmetatable(t, {
     __index = function()
-      return noop
+      return fallback
     end,
   })
 end

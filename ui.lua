@@ -57,8 +57,8 @@ function ui_status_update()
 end
 
 function ui_status_finalize()
-  ui_set_hint(SPLASH_HINT_BASE)
   ui_messages.result = ui_results_message()
+  ui_show_command_prompt()
 end
 
 function ui_status_reset()
@@ -73,16 +73,16 @@ function ui_draw_hint()
   ui.terminal.write(hint)
 end
 
+function ui_show_command_prompt()
+  ui_set_hint(SPLASH_HINT_BASE)
+end
+
 function ui_draw_status()
   local status = ui_messages.results or ui_messages.status
   --local statusline = hint .. "   " .. status
   --logdebug("STATUS: " .. statusline)
   --ui.terminal.write(statusline)
   ui.status_bar.draw(status)
-end
-
-function ui_init()
-  ui_set_hint(SPLASH_HINT_BASE)
 end
 
 -- alias

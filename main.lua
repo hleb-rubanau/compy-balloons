@@ -52,6 +52,17 @@ function game_validate_input(txt)
   game_status_update()
 end
 
+game_commands = action_map({
+  start = game_start,
+  restart = game_start
+}, 
+  ui_show_command_prompt 
+)
+function game_command(txt)
+  game_commands[txt]()
+end
+
+
 on_click = action_map({
   loaded = game_start,
   finished = game_start,
@@ -63,8 +74,8 @@ on_tick = action_map({
 
 on_input = action_map({
   active = game_validate_input,
-  loaded = on_text_match("start", game_start),
-  finished = on_text_match("start", game_start),
+  loaded = game_command,
+  finished = game_command,
 })
 
 function game_state_router(map, debugname)
@@ -100,7 +111,7 @@ function game_init()
   hooks.draw = game_state_router(ui_renderers)
 
   compy.singleclick = hooks["click"]
-  ui_init() -- writes hint
+  ui_show_command_prompt() 
   love.draw = hooks["draw"]
   love.update = hook("update")
 end
