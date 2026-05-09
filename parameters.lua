@@ -44,4 +44,7 @@ TASK_DEFAULTS = {
   size = 1,
   style = "blue",
   speed = 1,
+  --size = 1.5,
+  --style = "red",
+  --speed = 0.75,
 }

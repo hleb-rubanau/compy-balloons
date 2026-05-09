@@ -266,8 +266,8 @@ end
 --               size (1|2|3), text, text_color, font
 -- Returns { geometry={w,h}, draw=fn }
 -------------------------------------------------------------------------------
-function widget_balloon(style)
-  local scale = style.size or 1
+function widget_balloon(style, scale)
+  local scale = scale or 1 -- need to pick from task
 
   local rx, ry = 40 * scale, 40 * scale
   local nubW = 10 * scale
@@ -461,7 +461,7 @@ end
 --   phase 1   → blank (noop)
 -- draw(score, phase)
 -------------------------------------------------------------------------------
-function widget_challenge(question, answer, balloon_style)
+function widget_challenge(question, answer, balloon_style, balloon_size)
 
   balloon_style = BALLOON_STYLES[balloon_style] or BALLOON_STYLES.red
   box_style = STYLES.card
@@ -475,15 +475,14 @@ function widget_challenge(question, answer, balloon_style)
 
   local textbox_anim = widget_animation(q_box, qa_box, widget_invisible(qa_box))
 
-  local ref_balloon = widget_balloon(balloon_style)
-  local bw, bh = unpack(ref_balloon.geometry)
+  local w_balloon = widget_balloon(balloon_style, balloon_size)
+  local bw, bh = unpack(w_balloon.geometry)
   local tw, th = unpack(textbox_anim.geometry)
   local overlap = 5
   local balloon_x = (math.max(bw, tw) - bw) / 2
   local box_x = (math.max(bw, tw) - tw) / 2
   local box_y = bh - overlap
 
-  local w_balloon = widget_balloon(balloon_style)
 
   return {
     geometry = { math.max(bw, tw), bh + th - overlap },
