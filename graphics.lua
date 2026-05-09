@@ -44,12 +44,23 @@ STYLES = {
     font = FONTS.h5,
     color = COLORS.yellow,
   },
+  question_answered = {
+    font = FONTS.h5,
+    color = COLORS.obsidian,
+  },
   answer = {
     font = FONTS.h4,
-    color = COLORS.green
+    color = COLORS.blue
   },
   box = {
     bg_color = COLORS.obsidian, -- 0.90
+    border_color = COLORS.metallic,
+    border_width = 2,
+    corner_radius = 6,
+    padding = nil, -- nil → auto (0.35 × inner height)
+  },
+  box_answered = {
+    bg_color = COLORS.green, -- 0.90
     border_color = COLORS.metallic,
     border_width = 2,
     corner_radius = 6,
@@ -99,13 +110,23 @@ STYLES = {
 BALLOON_STYLES = { 
   red = {
     fill_color = COLORS.crimson,
-    line_color = COLORS.ruby,
-    size = 1,
+    line_color = COLORS.ruby
   },
   blue = {
     fill_color = COLORS.azure,
-    line_color = COLORS.denim,
-    size = 1,
+    line_color = COLORS.denim
+  },
+  yellow = {
+    fill_color = COLORS.yellow,
+    line_color = COLORS.gold
+  },
+  orange = {
+    fill_color = COLORS.orange,
+    line_color = COLORS.gold
+  },
+  green = {
+    fill_color = COLORS.green,
+    line_color = COLORS.denim
   }
 }
 
@@ -467,9 +488,10 @@ function widget_challenge(question, answer, balloon_style, balloon_size)
   label_styles = { question = STYLES.question, answer = STYLES.answer }
 
   local q_label = widget_text_label(question, STYLES.question)
+  local q_label_answered = widget_text_label(question, STYLES.question_answered)
   local a_label = widget_text_label(answer, STYLES.answer) 
 
-  local qa_box = widget_answered_box(q_label, a_label, STYLES.box)
+  local qa_box = widget_answered_box(q_label_answered, a_label, STYLES.box_answered)
   local q_box = widget_answered_box(q_label, widget_invisible(a_label), STYLES.box)
 
   local textbox_anim = widget_animation(q_box, qa_box, widget_invisible(qa_box))
