@@ -104,7 +104,7 @@ function challenge_ascend(c, t, i, callback)
 end
 
 function challenge_draw(c)
-  c.widget.draw(c.x, x.y, c.score, c.phase)
+  c.widget.draw(c.x, c.y, c.score, c.phase)
 end
 
 on_challenge_update = action_map({

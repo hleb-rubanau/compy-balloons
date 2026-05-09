@@ -87,7 +87,8 @@ ui_renderers = action_map({
   loaded = ui.splash_welcome.draw,
   active = function()
     ui.field.draw()
-    ui.challenges.draw()
+    --ui.challenges.draw()
+    safe_exec(ui.challenges.draw)
     ui_draw_status()
   end,
   finished = function()
