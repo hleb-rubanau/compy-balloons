@@ -512,19 +512,20 @@ function widget_field()
 end
 
 function widget_splash(m1, m2, m3, s1, s2, s3)
-  local t = widget_text_line
-  local sh = SCREEN_HEIGHT
   local s1 = s1 or STYLES.splash_header
   local s2 = s2 or STYLES.splash_subheader
   local s3 = s3 or STYLES.splash_hint
 
+  local t = widget_text_line
   local w1, w2, w3 = t(m1, s1), t(m2, s2), t(m3, s3)
-  local y1, y2, y3 = 0.3 * sh, 0.5 * sh, 0.8 * sh
+  
+  local wh = FIELD_HEIGHT
+  local y1, y2, y3 = 0.3 * wh, 0.5 * wh, 0.8 * wh
 
   local draw = function(t1, t2, t3)
     gfx.push("all")
     apply_style(STYLES.splash_background)
-    gfx.rectangle("fill", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
+    gfx.rectangle("fill", 0, 0, SCREEN_WIDTH, wh)
     draw_at(0, y1, w1.draw, t1)
     draw_at(0, y2, w2.draw, t2)
     draw_at(0, y3, w3.draw, t3)

@@ -20,7 +20,7 @@ STATS_TEMPLATE = "Solved: %s/%s | Score: %s | Time: %ds"
 STATUS_TEMPLATE = "Solved: %s | Missed: %s | Active: %s | Pending: %s | Score: %s | Time: %ds"
 
 GAME_OVER_HEADER = "Game Over"
-SPLASH_HINT_BASE = "click or type 'start'"
+SPLASH_HINT_BASE = "Type <start> or click"
 SPLASH_HINT_START = "To start: " .. SPLASH_HINT_BASE
 SPLASH_HINT_RESTART = "To restart: " .. SPLASH_HINT_BASE
 

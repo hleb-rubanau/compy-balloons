@@ -47,6 +47,7 @@ end
 
 function ui_set_hint(txt)
   ui_messages.hint = txt
+  ui_draw_hint()
 end
 
 function ui_status_update()
@@ -56,26 +57,32 @@ function ui_status_update()
 end
 
 function ui_status_finalize()
-  ui_messages.hint = SPLASH_HINT_RESTART
+  ui_set_hint(SPLASH_HINT_BASE)
   ui_messages.results = ui_results_message()
-  logdebug("HINT: " .. ui_messages.hint)
-  logdebug("RESULTS: " .. ui_messages.results)
 end
 
 function ui_status_reset()
-  ui_messages.hint = STARTING_PROMPT
   ui_messages.status = nil
   ui_messages.results = nil
+  ui_set_hint(STARTING_PROMPT)
+end
+
+function ui_draw_hint()
+  local hint = ui_messages.hint or "         "
+  ui.terminal.read(noop)
+  ui.terminal.write(hint)
 end
 
 function ui_draw_status()
-  local hint = ui_messages.hint or "    "
   local status = ui_messages.results or ui_messages.status
   --local statusline = hint .. "   " .. status
   --logdebug("STATUS: " .. statusline)
   --ui.terminal.write(statusline)
-  ui.terminal.write(hint)
   ui.status_bar.draw(status)
+end
+
+function ui_init()
+  ui_set_hint(SPLASH_HINT_BASE)
 end
 
 -- alias
