@@ -69,7 +69,7 @@ function ui_draw_status()
   local hint = ui_messages.hint or "    "
   local status = ui_messages.results or ui_messages.status
   local statusline = hint .. "   " .. status
-  logdebug("STATUS: " .. statusline)
+  --logdebug("STATUS: " .. statusline)
   ui.terminal.write(statusline)
 end
 

@@ -4,6 +4,7 @@ require("config")
 require("tasks")
 require("helpers")
 require("os")
+require("debugfunc")
 
 challenges_queue_size = MAX_SLOTS
 challenges = {}
@@ -56,6 +57,7 @@ end
 function challenge_maybe_launch(c, t, i, callback)
   local launch_due = (i - 1) * LAUNCH_DELAY < t
   if launch_due then
+    logdebug("LAUNCH DUE: %s", i)
     c.launched = t
     c.x = get_launch_position(c, t)
     c.score = c.task.score
@@ -102,7 +104,7 @@ function challenge_draw(c)
 end
 
 on_challenge_update = action_map({
-  waiting = challenge_maybe_launch,
+  pending = challenge_maybe_launch,
   active = challenge_descend,
   solved = challenge_ascend,
 })
@@ -110,6 +112,7 @@ on_challenge_update = action_map({
 function challenges_update(time, callback)
   for i = 1, queue_size do
     local c = challenges[i]
+    logdebug("challenges[%s].state=%s", i, c.state)
     on_challenge_update[c.state](c, time, i, callback)
   end
 end
