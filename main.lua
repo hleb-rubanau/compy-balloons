@@ -54,14 +54,11 @@ end
 
 game_commands = action_map({
   start = game_start,
-  restart = game_start
-}, 
-  ui_show_command_prompt 
-)
+  restart = game_start,
+}, ui_show_command_prompt)
 function game_command(txt)
   game_commands[txt]()
 end
-
 
 on_click = action_map({
   loaded = game_start,
@@ -111,7 +108,7 @@ function game_init()
   hooks.draw = game_state_router(ui_renderers)
 
   compy.singleclick = hooks["click"]
-  ui_show_command_prompt() 
+  ui_show_command_prompt()
   love.draw = hooks["draw"]
   love.update = hook("update")
 end

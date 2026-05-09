@@ -518,7 +518,7 @@ function widget_splash(m1, m2, m3, s1, s2, s3)
 
   local t = widget_text_line
   local w1, w2, w3 = t(m1, s1), t(m2, s2), t(m3, s3)
-  
+
   local wh = FIELD_HEIGHT
   local y1, y2, y3 = 0.3 * wh, 0.5 * wh, 0.8 * wh
 
