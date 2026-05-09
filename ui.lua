@@ -47,6 +47,7 @@ end
 
 function ui_set_hint(txt, ...)
   ui_messages.hint = txt
+  --logdebug("SET HINT: " .. txt)
   ui_draw_hint(...)
 end
 
@@ -67,6 +68,7 @@ end
 
 function ui_draw_hint(...)
   local hint = ui_messages.hint or "         "
+  logdebug("DRAWING HINT: "..hint)
   ui.terminal.write(hint, ...)
 end
 

@@ -99,12 +99,12 @@ function game_init()
   challenges_init()
 
   local state_updater = game_state_router(on_tick)
-  local input_handler = game_state_router(on_input, "input")
+  local input_handler = game_state_router(on_input)
   hooks.update = function(...)
     ui_read_input(input_handler)
     state_updater(...)
   end
-  hooks.click = game_state_router(on_click, "click")
+  hooks.click = game_state_router(on_click)
   hooks.draw = game_state_router(ui_renderers)
 
   compy.singleclick = hooks["click"]

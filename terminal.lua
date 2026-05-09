@@ -14,7 +14,7 @@ end
 
 function terminal_write(msg, flushed)
   if not flushed then
-    terminal_read()
+    terminal()
   end
   input_text(msg, nil)
 end
