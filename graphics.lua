@@ -5,7 +5,7 @@ gfx = love.graphics
 default_opacity = 1.0
 -- allows using predefined colors with dynamic opacity
 function setColor(c, a)
-  gfx.setColor(c[1], c[2], c[3], a or c[4] or default_opacity)
+  gfx.setColor(c[1], c[2], c[3], (a or default_opacity))
 end
 
 -- Every function returns { geometry={w,h}, draw=fn }
@@ -211,9 +211,9 @@ function widget_box(inner_w, inner_h, style)
     inner_pos = { pad, pad },
     draw = function()
       gfx.push("all")
-      gfx.setColor(style.bg_color)
+      setColor(style.bg_color)
       gfx.rectangle("fill", 0, 0, w, h, r)
-      gfx.setColor(style.border_color)
+      setColor(style.border_color)
       gfx.setLineWidth(b)
       gfx.rectangle("line", 0, 0, w, h, r)
       gfx.pop()
@@ -488,9 +488,14 @@ function widget_challenge(question, answer, balloon_style)
   return {
     geometry = { math.max(bw, tw), bh + th - overlap },
     draw = function(score, phase)
+      phase = phase or 0
       gfx.push("all")
       draw_at(balloon_x, 0, w_balloon.draw, score )
+
+      default_opacity = 1.0 - math.min(1, phase)
       draw_at(box_x, box_y, textbox_anim.draw, (phase or 0))
+      default_opacity = 1.0
+
       gfx.pop()
     end,
   }
