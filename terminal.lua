@@ -13,9 +13,6 @@ function terminal_read(callback)
 end
 
 function terminal_write(msg, flushed)
-  if not flushed then
-    terminal()
-  end
   input_text(msg, nil)
 end
 
