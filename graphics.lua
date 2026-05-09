@@ -54,16 +54,6 @@ STYLES = {
     corner_radius = 8,
     padding = nil,
   },
-  balloon_red = {
-    fill_color = COLORS.crimson,
-    line_color = COLORS.ruby,
-    size = 1,
-  },
-  balloon_blue = {
-    fill_color = COLORS.azure,
-    line_color = COLORS.denim,
-    size = 1,
-  },
   splash = {
     bg_color = COLORS.blue,
     font_color = COLORS.yellow,
@@ -92,6 +82,19 @@ STYLES = {
     font = FONTS.h5,
     color = COLORS.white,
   },
+}
+  
+BALLOON_STYLES = { 
+  red = {
+    fill_color = COLORS.crimson,
+    line_color = COLORS.ruby,
+    size = 1,
+  },
+  blue = {
+    fill_color = COLORS.azure,
+    line_color = COLORS.denim,
+    size = 1,
+  }
 }
 
 STYLE_ACTIONGS = {
@@ -446,7 +449,7 @@ end
 -- draw(score, phase)
 -------------------------------------------------------------------------------
 function widget_challenge(question, answer, balloon_style, label_styles, box_style)
-  balloon_style = balloon_style or STYLES.balloon_red
+  balloon_style = BALLOON_STYLES[balloon_style] or BALLOON_STYLES.red
   box_style = box_style or STYLES.card
   label_styles = label_styles
     or {
