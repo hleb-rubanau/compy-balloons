@@ -57,7 +57,7 @@ end
 function challenge_maybe_launch(c, t, i, callback)
   local launch_due = (i - 1) * LAUNCH_DELAY < t
   if launch_due then
-    logdebug("LAUNCH DUE: %s", i)
+    --logdebug("LAUNCH DUE: %s", i)
     c.launched = t
     c.x = get_launch_position(c, t)
     c.score = c.task.score

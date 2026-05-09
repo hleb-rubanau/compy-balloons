@@ -19,7 +19,7 @@ end
 
 function game_over()
   logdebug("GAME OVER")
-  stats_debug()
+  --stats_debug()
   ui_status_finalize()
   game_state = "finished" -- stops updates, activates splash
 end
