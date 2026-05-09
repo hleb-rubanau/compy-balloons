@@ -58,7 +58,7 @@ end
 
 function ui_status_finalize()
   ui_set_hint(SPLASH_HINT_BASE)
-  ui_messages.results = ui_results_message()
+  ui_messages.result = ui_results_message()
 end
 
 function ui_status_reset()
@@ -96,6 +96,6 @@ ui_renderers = action_map({
     ui_draw_status()
   end,
   finished = function()
-    ui.splash_restart.draw(game.msg_stats_final)
+    ui.splash_restart.draw(ui_messages.result)
   end,
 })
