@@ -8,7 +8,7 @@ end
 
 function inspect(tname, t)
   logdebug("TABLE: %s", tname)
-  for k, v in ipairs(t) do
+  for k, v in pairs(t) do
     logdebug("\t%s[%s]: %s", tname, tostring(k), tostring(v))
   end
 end

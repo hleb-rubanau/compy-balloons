@@ -62,6 +62,7 @@ function challenge_maybe_launch(c, t, i, callback)
     c.score = c.task.score
     c.state = "active"
     callback("launched", c.task.score)
+    inspect(fmt("challenge[%s]",i), c)
   end
 end
 
@@ -116,8 +117,10 @@ function challenges_update(time, callback)
 end
 
 function challenges_validate(text, time, callback)
+  Log.debug(fmt("Validating text=%s", tostring(text)))
   for i = 1, queue_size do
     local c = challenges[i]
+    Log.debug(fmt("Validating for challenge #%s (state=%s)", i, tostring(c.state)))
     if c.state == "actve" then
       challenge_validate(c, text, time, i, callback)
     end
