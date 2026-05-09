@@ -23,7 +23,7 @@ function task_add(taskdef)
   t.validator = function(txt)
     return (txt ~= t.a)
   end
-  t.runway = FIELD_HEIGHT - t.widget.geometry[1]
+  t.runway = FIELD_HEIGHT - t.widget.geometry[2]
   t.descend_speed = t.speed * (t.runway / ANSWER_TIMEOUT)
   t.devalue_speed = t.speed * (t.score / ANSWER_TIMEOUT)
   table.insert(TASKS, t)
