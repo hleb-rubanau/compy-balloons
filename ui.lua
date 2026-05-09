@@ -14,6 +14,7 @@ ui = {
   field = widget_field(),
   splash_welcome = widget_splash_welcome(),
   splash_restart = widget_splash_game_over(),
+  status_bar = renderer_at(0, FIELD_HEIGHT, widget_status_bar()),
   challenges = {
     draw = challenges_draw,
   },
@@ -35,11 +36,13 @@ end
 
 function ui_status_message()
   local w = stats.wins
+  local f = stats.losses
   local p = stats.pending
-  local n = stats.total - p
+  local a = stats.total - p - w - f 
+  --local n = stats.total - p
   local s = stats.score
   local t = stats.time
-  return fmt(STATUS_TEMPLATE, w, n, p, s, t)
+  return fmt(STATUS_TEMPLATE, w, f, a, p, s, t)
 end
 
 function ui_set_hint(txt)
@@ -68,9 +71,11 @@ end
 function ui_draw_status()
   local hint = ui_messages.hint or "    "
   local status = ui_messages.results or ui_messages.status
-  local statusline = hint .. "   " .. status
+  --local statusline = hint .. "   " .. status
   --logdebug("STATUS: " .. statusline)
-  ui.terminal.write(statusline)
+  --ui.terminal.write(statusline)
+  ui.terminal.write(hint)
+  ui.status_bar.write(status)
 end
 
 -- alias

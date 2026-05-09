@@ -19,6 +19,12 @@ STYLES = {
   field_background = {
     color = COLORS.silver,
   },
+  status_bar = {
+    color = COLORS.azure,
+    font  = FONTS.small,
+    padding = 2,
+    align = 'right' 
+  },
   splash_background = {
     color = COLORS.denim,
   },
@@ -127,8 +133,8 @@ function widget_text_label(text, style)
 end
 
 function widget_text_line(text, style, align, width)
-  align = align or "center"
   style = style or {}
+  align = align or style.align or "center"
   local font = style.font or gfx.getFont()
   local padding = style.padding or 0
 
@@ -400,6 +406,9 @@ function widget_with_static_position(x, y, orig)
   }
 end
 
+-- syntactic sugar
+renderer_at = widget_with_static_position
+
 function widget_stack(...)
   local widgets = { ... }
   return {
@@ -544,4 +553,8 @@ function widget_splash_game_over()
       splash.draw(nil, stats, nil)
     end,
   }
+end
+
+function widget_status_bar()
+  return widget_text_line("", STYLES.status_bar )
 end

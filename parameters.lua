@@ -17,7 +17,7 @@ RESULTS_MESSAGE = "Your score: %s (%s/%s)\nClick to restart"
 STARTING_PROMPT = "Type and press <Enter>"
 GAME_PROMPT = "Your answer: <%s>"
 STATS_TEMPLATE = "Solved: %s/%s | Score: %s | Time: %ds"
-STATUS_TEMPLATE = "Solved: %s/%s | Pending: %s | Score: %s | Time: %ds"
+STATUS_TEMPLATE = "Solved: %s | Missed: %s | Active: %s | Pending: %s | Score: %s | Time: %ds"
 
 GAME_OVER_HEADER = "Game Over"
 SPLASH_HINT_BASE = "click or type 'start'"
@@ -35,6 +35,7 @@ FONT_SIZES = {
   h5 = 16,
   h6 = 14,
   default = 12,
+  small = 10
 }
 
 TASK_DEFAULTS = {

@@ -31,7 +31,6 @@ end
 
 function stats_add(name, step)
   step = step or 1
-  logdebug("STATS ADD: %s -> %s", name, step)
   local new_val = stats[name] + step
   stats[name] = new_val
   return new_val
