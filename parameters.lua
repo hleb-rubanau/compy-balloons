@@ -35,7 +35,7 @@ FONT_SIZES = {
   h5 = 16,
   h6 = 14,
   default = 12,
-  small = 10
+  small = 10,
 }
 
 TASK_DEFAULTS = {

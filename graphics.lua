@@ -21,9 +21,9 @@ STYLES = {
   },
   status_bar = {
     color = COLORS.azure,
-    font  = FONTS.small,
+    font = FONTS.small,
     padding = 2,
-    align = 'right' 
+    align = "right",
   },
   splash_background = {
     color = COLORS.denim,
@@ -556,5 +556,5 @@ function widget_splash_game_over()
 end
 
 function widget_status_bar()
-  return widget_text_line("", STYLES.status_bar )
+  return widget_text_line("", STYLES.status_bar)
 end

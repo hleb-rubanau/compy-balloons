@@ -38,7 +38,7 @@ function ui_status_message()
   local w = stats.wins
   local f = stats.losses
   local p = stats.pending
-  local a = stats.total - p - w - f 
+  local a = stats.total - p - w - f
   --local n = stats.total - p
   local s = stats.score
   local t = stats.time
